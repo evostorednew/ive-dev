@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var t=localStorage.getItem('ive-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F3F7F5">
+<title>404 — IVE</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23F3F7F5'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23071611'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Source+Sans+3:wght@400;600&amp;display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #F3F7F5;
+    --bg-raised: #FFFFFF;
+    --bg-inset: #E9EFEC;
+    --bg-glass: rgba(243, 247, 245, 0.82);
+    --on-accent: #071611;
+    --line: #D5DFDB;
+    --line-strong: #B4C3BD;
+    --text: #071611;
+    --text-dim: #40544D;
+    --text-faint: #5E706A;
+    --running: #FFB000;
+    --running-ink: #8A5200;
+    --complete: #087A4B;
+    --complete-ink: #066B41;
+    --waiting: #8FA09A;
+    --waiting-ink: #566661;
+    --attention: #C83B24;
+    --attention-ink: #A82F1B;
+    --route: #1647FF;
+    --route-ink: #0E36C7;
+    --focus: #1647FF;
+    --invert-bg: #071611;
+    --invert-raised: #0E211A;
+    --invert-text: #F3F7F5;
+    --invert-dim: #9FB2AB;
+    --invert-line: #223229;
+    --r-chip: 4px;
+    --maxw: 1480px;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #101012;
+    --bg-raised: #17171A;
+    --bg-inset: #0B0B0D;
+    --bg-glass: rgba(16, 16, 18, 0.82);
+    --on-accent: #0B0B0D;
+    --line: #26262B;
+    --line-strong: #34343B;
+    --text: #EDEDE9;
+    --text-dim: #A3A39E;
+    --text-faint: #85857F;
+    --running: #FFB454;
+    --running-ink: #FFB454;
+    --complete: #7DCE82;
+    --complete-ink: #7DCE82;
+    --waiting: #8A8A93;
+    --waiting-ink: #8A8A93;
+    --attention: #F2545B;
+    --attention-ink: #F2545B;
+    --route: #6BB6C9;
+    --route-ink: #6BB6C9;
+    --focus: #FFB454;
+    --invert-bg: #F4F3EF;
+    --invert-raised: #FFFFFF;
+    --invert-text: #1A1A18;
+    --invert-dim: #5C5C56;
+    --invert-line: #D9D8D2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  button { font: inherit; color: inherit; background: none; cursor: pointer; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 76px 24px 24px;
+  }
+  .theme-toggle {
+    position: fixed; top: 20px; right: 20px;
+    inline-size: 84px; padding: 7px 8px;
+    border: 1px solid var(--line); border-radius: var(--r-chip);
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 11px; font-weight: 500; line-height: 1.2;
+    letter-spacing: 0.07em; text-align: center; white-space: nowrap;
+  }
+  .theme-toggle:hover { border-color: var(--line-strong); background: var(--bg-raised); }
+  .box { max-width: min(560px, var(--maxw)); width: 100%; }
+  .term {
+    background: var(--bg-inset); border: 1px solid var(--line); border-radius: 8px;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 13.5px; line-height: 2; padding: 18px 20px;
+    color: var(--text-dim);
+  }
+  .term .head {
+    display: flex; justify-content: space-between;
+    color: var(--text-faint); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: 12px;
+  }
+  .ps1 { color: var(--text-faint); }
+  .fail { color: var(--attention-ink); }
+  .idle { color: var(--waiting-ink); }
+  h1 {
+    font-family: 'Archivo', system-ui, sans-serif;
+    font-stretch: 125%; font-weight: 700; font-size: clamp(34px, 7vw, 52px);
+    letter-spacing: -0.02em; margin: 28px 0 10px;
+  }
+  p.sub { color: var(--text-dim); font-size: 16px; }
+  a.back {
+    display: inline-block; margin-top: 26px;
+    background: var(--invert-bg); color: var(--invert-text);
+    font-weight: 600; font-size: 15px; text-decoration: none;
+    padding: 11px 20px; border-radius: 6px;
+  }
+  a.back:hover { background: var(--invert-raised); }
+  a.gh { color: var(--text-dim); font-size: 14px; margin-left: 18px; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 2px; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+</style>
+</head>
+<body>
+  <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme" data-theme-toggle>○ LIGHT</button>
+  <main class="box">
+    <div class="term" role="img" aria-label="Terminal output: no route matched this page, zero sessions dispatched">
+      <div class="head"><span>ive · router</span><span class="fail"><span aria-hidden="true">!</span><span class="sr-only">status: </span> attention</span></div>
+      <p><span class="ps1">$</span> ive resolve <span id="path">/this-page</span></p>
+      <p class="fail"><span aria-hidden="true">!</span><span class="sr-only">attention: </span> no route matched · 404</p>
+      <p class="idle"><span aria-hidden="true">○</span><span class="sr-only">queued: </span> sessions dispatched: 0 · nothing to orchestrate here</p>
+    </div>
+    <h1>This page doesn&rsquo;t exist.</h1>
+    <p class="sub">Even Commander can&rsquo;t delegate a task to a URL that was never written.</p>
+    <a class="back" href="/">Back to Mission Control</a>
+    <a class="gh" href="https://github.com/vibe2vibe/ive">GitHub →</a>
+  </main>
+  <script>
+    (function () {
+      var themeMeta = document.querySelector('meta[name="theme-color"]');
+      var themeToggle = document.querySelector('[data-theme-toggle]');
+
+      function readTheme() {
+        try {
+          var storedTheme = localStorage.getItem('ive-theme');
+          if (storedTheme === 'dark' || storedTheme === 'light') return storedTheme;
+        } catch (e) {}
+        return 'light';
+      }
+
+      function applyTheme(theme, persist) {
+        var isDark = theme === 'dark';
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        themeToggle.textContent = isDark ? '● DARK' : '○ LIGHT';
+        themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+        themeToggle.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+        themeMeta.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim());
+        if (persist) {
+          try { localStorage.setItem('ive-theme', isDark ? 'dark' : 'light'); } catch (e) {}
+        }
+      }
+
+      applyTheme(readTheme(), false);
+      themeToggle.addEventListener('click', function () {
+        applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark', true);
+      });
+
+      var el = document.getElementById('path');
+      var p = location.pathname || '/this-page';
+      if (p.length > 42) p = p.slice(0, 41) + '…';
+      el.textContent = p.replace(/[<>"']/g, '');
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var t=localStorage.getItem('ive-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F3F7F5">
+<title>Architecture — IVE</title>
+<meta name="description" content="How IVE runs local coding agents: Python, real PTY sessions, SQLite state, the event bus, isolated worktrees, access control, and supply-chain scanning.">
+<link rel="canonical" href="https://ive.dev/architecture.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ive.dev/architecture.html">
+<meta property="og:title" content="Architecture — IVE">
+<meta property="og:description" content="The local process model, event bus, isolation, access control, and security underneath IVE.">
+<meta property="og:image" content="https://ive.dev/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Architecture — IVE">
+<meta name="twitter:description" content="The local process model, event bus, isolation, access control, and security underneath IVE.">
+<meta name="twitter:image" content="https://ive.dev/assets/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23F3F7F5'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23071611'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="architecture-page">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav" id="top">
+  <div class="nav-inner">
+    <a class="wordmark" href="index.html#top" aria-label="IVE — home">
+      <span class="wordmark-text">IVE</span><span class="wordmark-dot" aria-hidden="true"></span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="index.html#route">Product</a>
+      <a href="index.html#operation">Workflows</a>
+      <a href="architecture.html" aria-current="page">Architecture</a>
+      <a href="index.html#open-source">Open&nbsp;Source</a>
+      <a class="nav-gh" href="https://github.com/vibe2vibe/ive" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme" data-theme-toggle>○ LIGHT</button>
+    <a class="btn btn-primary nav-cta" href="index.html#get-ive">Get IVE</a>
+  </div>
+</header>
+
+<aside class="phase-rail" aria-label="Run phase">
+  <a class="phase-step" data-phase-label="request" href="#arch-request"><span>REQUEST</span></a>
+  <a class="phase-step" data-phase-label="route" href="#arch-route"><span>ROUTE</span></a>
+  <a class="phase-step" data-phase-label="execute" href="#arch-execute"><span>EXECUTE</span></a>
+  <a class="phase-step" data-phase-label="verify" href="#arch-verify"><span>VERIFY</span></a>
+  <a class="phase-step is-active" data-phase-label="proof" href="#arch-proof"><span>PROOF</span></a>
+</aside>
+
+<main id="main">
+  <header class="arch-hero phase-section" id="arch-request" data-phase="request">
+    <div class="arch-hero-inner">
+      <p class="kicker"><span class="glyph" aria-hidden="true">○</span> REQUEST · ARCHITECTURE</p>
+      <h1>What actually runs<br>on your machine.</h1>
+      <p class="arch-lede">A local Python control plane opens real terminals, tracks every state change in SQLite, and exposes the operation to one React interface.</p>
+    </div>
+  </header>
+
+  <section class="arch-section arch-process phase-section" id="arch-route" data-phase="route" aria-labelledby="process-title">
+    <div class="arch-section-head">
+      <p class="kicker"><span class="glyph st-thinking-c" aria-hidden="true">◐</span> ROUTE · PROCESS MODEL</p>
+      <div>
+        <h2 id="process-title">One backend. Many real processes.</h2>
+        <p>The browser controls the operation. The backend owns the processes and the state.</p>
+      </div>
+    </div>
+
+    <figure class="arch-process-diagram" aria-label="The local React browser connects over HTTP and WebSocket to a Python backend that forks PTY sessions for Claude Code and Gemini CLI agents while persisting all state in SQLite.">
+      <div class="arch-node arch-node-browser">
+        <span class="arch-node-label">local interface</span>
+        <strong>React in the browser</strong>
+        <span class="arch-node-meta">commands · terminal input · live state</span>
+      </div>
+
+      <div class="arch-route arch-route-down" aria-hidden="true"><span>HTTP + WebSocket</span></div>
+
+      <div class="arch-node arch-node-backend">
+        <span class="arch-node-label">control plane</span>
+        <strong>Python backend</strong>
+        <span class="arch-node-meta">session registry · event bus · access guards</span>
+      </div>
+
+      <div class="arch-branch" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+      <div class="arch-process-lanes">
+        <div class="arch-node arch-node-session">
+          <span class="arch-node-label">PTY · s-01</span>
+          <strong>Claude Code · Opus</strong>
+          <code>os.fork() + pty.openpty()</code>
+          <span class="status st-running"><span class="glyph" aria-hidden="true">●</span> running</span>
+        </div>
+        <div class="arch-node arch-node-session">
+          <span class="arch-node-label">PTY · s-02</span>
+          <strong>Gemini CLI · Pro</strong>
+          <code>os.fork() + pty.openpty()</code>
+          <span class="status st-thinking"><span class="glyph" aria-hidden="true">◐</span> thinking</span>
+        </div>
+        <div class="arch-node arch-node-session">
+          <span class="arch-node-label">PTY · s-n</span>
+          <strong>Claude Code · Sonnet</strong>
+          <code>os.fork() + pty.openpty()</code>
+          <span class="status st-waiting"><span class="glyph" aria-hidden="true">◇</span> waiting</span>
+        </div>
+        <div class="arch-node arch-node-store">
+          <span class="arch-node-label">state store</span>
+          <strong>SQLite</strong>
+          <code>sessions · events · audit</code>
+          <span class="arch-node-meta">all durable state</span>
+        </div>
+      </div>
+      <figcaption>Agent processes stay local. Terminal I/O remains real PTY I/O.</figcaption>
+    </figure>
+  </section>
+
+  <section class="arch-section arch-events phase-section" id="arch-execute" data-phase="execute" aria-labelledby="events-title">
+    <div class="arch-section-head">
+      <p class="kicker"><span class="glyph glyph-run" aria-hidden="true">●</span> EXECUTE · EVENT BUS</p>
+      <div>
+        <h2 id="events-title">A state change takes one path.</h2>
+        <p>Every consumer sees the same ordered change.</p>
+      </div>
+    </div>
+
+    <figure class="arch-event-figure" aria-label="A state change persists to SQLite, notifies local subscribers, broadcasts over WebSocket, and then delivers webhooks.">
+      <ol class="arch-event-path">
+        <li><span class="arch-step">01</span><strong>Persist</strong><code>SQLite</code></li>
+        <li><span class="arch-step">02</span><strong>Notify</strong><code>subscribers</code></li>
+        <li><span class="arch-step">03</span><strong>Broadcast</strong><code>WebSocket</code></li>
+        <li><span class="arch-step">04</span><strong>Deliver</strong><code>webhooks</code></li>
+      </ol>
+      <figcaption>One event record. Multiple delivery surfaces.</figcaption>
+    </figure>
+    <ul class="arch-event-kinds" aria-label="Tracked event categories">
+      <li>session lifecycle</li>
+      <li>tool execution</li>
+      <li>subagent spawning</li>
+      <li>compaction</li>
+    </ul>
+  </section>
+
+  <section class="arch-section arch-isolation phase-section" id="arch-verify" data-phase="verify" aria-labelledby="isolation-title">
+    <div class="arch-section-head">
+      <p class="kicker"><span class="glyph st-attention-c" aria-hidden="true">!</span> VERIFY · ISOLATION</p>
+      <div>
+        <h2 id="isolation-title">Parallel work without shared-file roulette.</h2>
+        <p>Isolation starts before an agent writes.</p>
+      </div>
+    </div>
+    <div class="arch-isolation-grid">
+      <div class="arch-isolation-copy">
+        <h3>One worktree per agent.</h3>
+        <p>Each session works in its own git worktree. Branch state stays scoped to that process.</p>
+        <p>Structured CLI hooks report lifecycle and tool activity as they happen.</p>
+      </div>
+      <dl class="arch-trace">
+        <div><dt>target</dt><dd><code>src/auth/session.ts</code></dd></div>
+        <div><dt>owner</dt><dd><code>s-01 · backend-auth</code></dd></div>
+        <div><dt>collision</dt><dd><span class="st-attention"><span class="glyph" aria-hidden="true">!</span> attention</span> · file lock detected</dd></div>
+        <div><dt>route</dt><dd><span class="st-done"><span class="glyph" aria-hidden="true">✓</span> complete</span> · <code>s-03</code> rerouted</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="arch-section arch-surface phase-section" data-phase="route" aria-labelledby="surface-title">
+    <div class="arch-section-head">
+      <p class="kicker"><span class="glyph st-thinking-c" aria-hidden="true">◐</span> ROUTE · PROGRAMMABLE SURFACE</p>
+      <div>
+        <h2 id="surface-title">The UI is one client.</h2>
+        <p>The same local control plane is available to scripts, agents, hooks, and extensions.</p>
+      </div>
+    </div>
+    <div class="stats-row arch-stats" aria-label="Programmable platform totals">
+      <div class="stat"><p class="stat-n">140+</p><p class="stat-l">api routes</p></div>
+      <div class="stat"><p class="stat-n">35+</p><p class="stat-l">mcp tools</p></div>
+      <div class="stat"><p class="stat-n">30+</p><p class="stat-l">event types</p></div>
+    </div>
+    <p class="source-line">Alpha snapshot · counted in github.com/vibe2vibe/ive</p>
+    <dl class="arch-surface-defs">
+      <div><dt>API</dt><dd>Drive sessions and read local state from code.</dd></div>
+      <div><dt>MCP tools</dt><dd>Let Commander spawn, assign, inspect, and route workers.</dd></div>
+      <div><dt>Events</dt><dd>Subscribe to changes or forward them by webhook.</dd></div>
+      <div><dt>Plugins</dt><dd>Install extensions from registries and attach MCP servers per session.</dd></div>
+    </dl>
+  </section>
+
+  <section class="arch-section arch-access phase-section" data-phase="verify" aria-labelledby="access-title">
+    <div class="arch-section-head">
+      <p class="kicker"><span class="glyph st-attention-c" aria-hidden="true">!</span> VERIFY · ACCESS CONTROL</p>
+      <div>
+        <h2 id="access-title">Permission is mode plus enforcement.</h2>
+        <p>Three modes. Three independent checks.</p>
+      </div>
+    </div>
+    <div class="arch-access-grid">
+      <div class="arch-table-wrap">
+        <table class="arch-access-table">
+          <caption class="sr-only">IVE access modes and their limits</caption>
+          <thead><tr><th>Mode</th><th>Can access</th><th>Terminal limit</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">brief</th><td>tasks and notes</td><td>no raw tool output</td></tr>
+            <tr><th scope="row">code</th><td>agent sessions</td><td>auto / plan · Bash allowlist</td></tr>
+            <tr><th scope="row">full</th><td>owner-equivalent</td><td>TTL-bounded</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <dl class="arch-layers">
+        <div><dt>route guards</dt><dd>Reject requests outside the active mode.</dd></div>
+        <div><dt>CLI flag injection</dt><dd>Constrain the agent process at launch.</dd></div>
+        <div><dt>PreToolUse hooks</dt><dd>Check tool calls before execution.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="arch-section arch-security phase-section" data-phase="verify" aria-labelledby="security-title">
+    <div class="arch-section-head">
+      <p class="kicker"><span class="glyph st-attention-c" aria-hidden="true">!</span> VERIFY · SECURITY</p>
+      <div>
+        <h2 id="security-title">Controls sit in the execution path.</h2>
+        <p>They are observable parts of the system, not a promise around it.</p>
+      </div>
+    </div>
+    <dl class="arch-security-ledger">
+      <div>
+        <dt><code>AVCP</code> · supply chain</dt>
+        <dd>Intercepts <code>pip</code>, <code>npm</code>, and GitHub Actions. Runs a 9-step package scan before execution.</dd>
+      </div>
+      <div>
+        <dt><code>HOME</code> · account sandbox</dt>
+        <dd>Each OAuth account gets a separate sandboxed HOME directory. Cookies do not cross account boundaries.</dd>
+      </div>
+      <div>
+        <dt><code>EVENT</code> · audit trail</dt>
+        <dd>Session, tool, subagent, and compaction changes persist to SQLite before delivery.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="arch-close phase-section" id="arch-proof" data-phase="proof" aria-labelledby="close-title">
+    <div class="arch-close-inner">
+      <p class="kicker"><span class="glyph st-done-c" aria-hidden="true">✓</span> PROOF · RUN LOCALLY</p>
+      <h2 id="close-title">Clone it. Read it. Run it locally.</h2>
+      <div class="install" role="group" aria-label="Installation command">
+        <div class="install-lines mono">
+          <p><span class="ps1" aria-hidden="true">$</span> git clone https://github.com/vibe2vibe/ive</p>
+          <p><span class="ps1" aria-hidden="true">$</span> cd ive &amp;&amp; ./start.sh</p>
+        </div>
+        <button class="copy-btn" type="button" data-copy="git clone https://github.com/vibe2vibe/ive &amp;&amp; cd ive &amp;&amp; ./start.sh">Copy</button>
+      </div>
+      <a class="btn btn-ghost" href="https://github.com/vibe2vibe/ive" target="_blank" rel="noopener">Read the source on GitHub</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <p class="footer-brand"><span class="wordmark-text">IVE</span> <span class="footer-full">Humanity&rsquo;s Last IDE</span></p>
+    <p class="footer-status mono"><span class="glyph glyph-run" aria-hidden="true">●</span><span class="sr-only">running: </span> system operational · local</p>
+    <nav class="footer-links" aria-label="Footer">
+      <a href="https://github.com/vibe2vibe/ive" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/vibe2vibe/ive#readme" target="_blank" rel="noopener">README</a>
+      <a href="https://github.com/vibe2vibe/ive/issues" target="_blank" rel="noopener">Issues</a>
+    </nav>
+    <p class="footer-license mono">Apache-2.0 · alpha · telemetry: anonymous, opt-out</p>
+  </div>
+</footer>
+
+<script src="script.js" defer></script>
+</body>
+</html>
