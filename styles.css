@@ -1820,7 +1820,7 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
 .final .install { margin: 52px 0 18px; }
 .footer-brand .footer-full { font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.05em; }
 
-@media (min-width: 861px) and (max-width: 1600px) {
+@media (min-width: 861px) and (max-width: 1720px) {
   .hero-inner, .proof-inner, .statement-inner, .story-frame, .chapter, .review-inner, .final-inner, .footer-inner,
   .arch-hero, .arch-section { padding-left: 124px; }
 }
