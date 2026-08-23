@@ -6,34 +6,34 @@
 :root {
   color-scheme: light;
   /* color — light is the default */
-  --bg: #F3F7F5;
+  --bg: #F4F5F6;
   --bg-raised: #FFFFFF;
-  --bg-inset: #E9EFEC;
-  --bg-glass: rgba(243, 247, 245, 0.82);
-  --on-accent: #071611;
-  --line: #D5DFDB;
-  --line-strong: #B4C3BD;
-  --text: #071611;
-  --text-dim: #40544D;
-  --text-faint: #5E706A;
+  --bg-inset: #EBEDEF;
+  --bg-glass: rgba(244, 245, 246, 0.82);
+  --on-accent: #15171A;
+  --line: #DDE0E3;
+  --line-strong: #BFC4C9;
+  --text: #15171A;
+  --text-dim: #4A4F55;
+  --text-faint: #6B7178;
   /* semantic state — base tokens are fills and marks; ink tokens are text */
   --running: #FFB000;
   --running-ink: #8A5200;
   --complete: #087A4B;
   --complete-ink: #066B41;
-  --waiting: #8FA09A;
-  --waiting-ink: #566661;
+  --waiting: #98A0A8;
+  --waiting-ink: #5A6067;
   --attention: #C83B24;
   --attention-ink: #A82F1B;
   --route: #1647FF;
   --route-ink: #0E36C7;
   --focus: #1647FF;
   /* opposite-ground section */
-  --invert-bg: #071611;
-  --invert-raised: #0E211A;
-  --invert-text: #F3F7F5;
-  --invert-dim: #9FB2AB;
-  --invert-line: #223229;
+  --invert-bg: #15171A;
+  --invert-raised: #1E2125;
+  --invert-text: #F4F5F6;
+  --invert-dim: #A6ADB4;
+  --invert-line: #2B2F34;
   /* type */
   --display: 'Inter', system-ui, -apple-system, sans-serif;
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
