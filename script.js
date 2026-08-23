@@ -43,46 +43,6 @@
   var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   var reduceMotion = motionQuery.matches;
 
-  /* ── continuous run-phase rail ──────────────────────── */
-  var phaseSections = document.querySelectorAll('[data-phase]');
-  var phaseLabels = document.querySelectorAll('[data-phase-label]');
-  var phaseIO = null;
-
-  function setPhase(phase) {
-    phaseLabels.forEach(function (label) {
-      var active = label.getAttribute('data-phase-label') === phase;
-      label.classList.toggle('is-active', active);
-      if (active) label.setAttribute('aria-current', 'step');
-      else label.removeAttribute('aria-current');
-    });
-  }
-
-  function readVisiblePhase() {
-    var marker = window.innerHeight * 0.42;
-    var best = null;
-    var bestDistance = Infinity;
-    phaseSections.forEach(function (section) {
-      var rect = section.getBoundingClientRect();
-      if (rect.top <= marker && rect.bottom >= marker) {
-        best = section;
-        bestDistance = 0;
-      } else if (bestDistance > 0) {
-        var distance = Math.min(Math.abs(rect.top - marker), Math.abs(rect.bottom - marker));
-        if (distance < bestDistance) { best = section; bestDistance = distance; }
-      }
-    });
-    if (best) setPhase(best.getAttribute('data-phase'));
-  }
-
-  if (phaseSections.length && phaseLabels.length && !reduceMotion && 'IntersectionObserver' in window) {
-    setPhase(phaseSections[0].getAttribute('data-phase'));
-    phaseIO = new IntersectionObserver(readVisiblePhase, { rootMargin: '-32% 0px -52% 0px', threshold: 0 });
-    phaseSections.forEach(function (section) { phaseIO.observe(section); });
-    readVisiblePhase();
-  } else if (phaseLabels.length) {
-    setPhase('proof');
-  }
-
   /* ── nav ─────────────────────────────────────────────── */
   var nav = document.querySelector('.nav');
   var onScrollNav = function () {
@@ -335,8 +295,6 @@
   motionQuery.addEventListener('change', function (event) {
     if (!event.matches) return;
     reduceMotion = true;
-    if (phaseIO) { phaseIO.disconnect(); phaseIO = null; }
-    setPhase('proof');
     stopAmbientIntervals();
     if (revealIO) revealIO.disconnect();
     figures.forEach(function (f) { f.classList.remove('reveal-fig'); });

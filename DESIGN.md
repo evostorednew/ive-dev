@@ -30,11 +30,9 @@ The five phases are the structural grammar:
 
 `REQUEST → ROUTE → EXECUTE → VERIFY → PROOF`
 
-A fixed left rail carries those phases through every main section. On tablet
-and smaller screens it becomes a compact horizontal indicator below the
-header. IntersectionObserver marks the active phase. With JavaScript disabled
-the content remains complete; with reduced motion the rail shows the final
-static PROOF state.
+The mono eyebrow in each main section carries its phase and names that
+section's role in the run. The phases stay embedded in the information
+hierarchy instead of occupying a separate viewport control.
 
 The hero’s right column is a truthful, complete run ledger with real session
 IDs, supported model labels, the status glyph vocabulary, a failed test gate,
@@ -51,17 +49,22 @@ state.
 
 | Role | Face | Notes |
 |---|---|---|
-| Display | **Archivo Expanded** (500–800) | H1, H2, concise product headlines, and wordmark. Tight leading and tracking. |
-| Body | **Source Sans 3** (400/600) | All explanatory and marketing copy. 16–18px, generous leading, ~64ch maximum. |
+| Display | **Inter** (400–800) | H1, H2, concise product headlines, and wordmark. Weight 620, balanced wrapping, tight tracking, and leading at or above 1.01. |
+| Body | **Inter** (400–800) | All explanatory and marketing copy. 16–18px, generous leading, ~64ch maximum. |
 | Machine | **IBM Plex Mono** (400/500/600) | Terminals, session IDs, statuses, metadata, eyebrows, keyboard keys, install commands, ledgers. |
 
 Rules:
 
-- Editorial voice is Source Sans 3. Display authority is Archivo Expanded.
+- Inter carries both the editorial and display voices; the separate tokens keep
+  those roles independently adjustable.
 - Machine voice is IBM Plex Mono. Terminal output is never proportional.
-- Body copy is never set in Archivo.
 - The H1 is the largest expression. Chapters step down from it.
-- Labels are mono uppercase with restrained tracking; they encode run state.
+- The size ladder is hero 42–66px, chapter 32–46px, statement 28–40px,
+  use-case and section titles 22–30px, card titles 17–19px, and body 16–18px.
+- Headlines use weight 620, negative tracking from -0.045em at the largest size
+  toward -0.02em at the smallest, balanced wrapping, and 1.01–1.15 leading.
+- Section eyebrows use IBM Plex Mono at 11px/500, 0.13em tracking, and uppercase
+  text; they encode run state.
 
 ## Color
 
@@ -135,9 +138,8 @@ communicate without color.
 
 - Twelve-column fluid grid, 1480px maximum content width, 8px base spacing.
 - Strongly left aligned and deliberately asymmetric.
-- The phase rail occupies the fixed viewport edge, not a content column.
-- Below the tablet breakpoint the phase rail becomes a horizontal strip below
-  the fixed header and never creates horizontal overflow.
+- Run phases are carried by section eyebrows and reserve no viewport edge or
+  content column.
 - Raw page plus hairline rules is the default surface.
 - Panels are reserved for product UI: terminals, session tiles, board columns,
   run ledgers, and generated briefings.
@@ -178,11 +180,10 @@ Every main section carries one visible phase eyebrow from the five-phase run.
 
 Grammar: **Branch → Execute → Verify → Proof.**
 
-- The phase rail is IntersectionObserver-driven, not scroll-position animation.
 - The end-to-end run uses CSS transforms with vanilla JavaScript.
 - Ambient changes are sparse and product-relevant.
 - `prefers-reduced-motion` removes ambient and scroll animation, expands the run
-  to its final state, and leaves the phase rail on PROOF.
+  to its final state.
 - With JavaScript disabled all content and the final run state remain readable.
 
 ## Voice

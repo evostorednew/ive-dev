@@ -15,10 +15,10 @@ Then open `http://localhost:8000/`. The pages also work directly from `file://`.
 ## File map
 
 - `index.html` — 13-block homepage organized as REQUEST → ROUTE → EXECUTE → VERIFY → PROOF
-- `architecture.html` — engineering architecture page using the same run-phase rail
+- `architecture.html` — engineering architecture page using the same design system
 - `404.html` — self-contained not-found page
 - `styles.css` — shared design system and page styles
-- `script.js` — dependency-free theme, phase-rail, run-story, and copy behavior
+- `script.js` — dependency-free theme, run-story, and copy behavior
 - `assets/og.html` — 1200×630 Open Graph image source
 - `DESIGN.md` — binding visual and interaction contract
 - `_reference-old-site-copy.txt` — product capability truth source
