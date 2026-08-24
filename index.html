@@ -62,13 +62,22 @@
       </div>
       <div class="stage-connectors" aria-hidden="true"><span class="conn c1"></span><span class="conn c2"></span><span class="conn c3"></span><span class="conn c4"></span></div>
       <div class="stage-grid">
-        <div class="session-card" data-ambient="a"><div class="sc-head"><span class="sid">s-01 · backend</span><span class="status st-running"><span class="glyph" aria-hidden="true">●</span> running</span></div><p class="sc-model">claude code · opus</p><div class="sc-term" data-term="a"><p><span class="ps1">$</span> claude -p "migrate session middleware"</p><p class="t-run"><span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> editing src/auth/middleware.ts</p><p class="t-dim">+47 −12 · 3 files</p></div></div>
-        <div class="session-card" data-ambient="b"><div class="sc-head"><span class="sid">s-02 · frontend</span><span class="status st-running"><span class="glyph" aria-hidden="true">●</span> running</span></div><p class="sc-model">claude code · sonnet</p><div class="sc-term" data-term="b"><p class="t-run"><span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> updating LoginForm.tsx</p><p class="t-dim">token refresh on focus</p><p class="t-dim">redirect flow pending</p></div></div>
+        <div class="session-card" data-ambient="a"><div class="sc-head"><span class="sid">s-01 · backend</span><span class="status st-running"><span class="glyph" aria-hidden="true">●</span> running</span></div><p class="sc-model">claude code · opus</p><div class="sc-term" data-term="a"><p class="t-run"><span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> working on sign-in backend</p><p class="t-dim">updating session handling</p><p class="t-dim">3 files changed</p></div></div>
+        <div class="session-card" data-ambient="b"><div class="sc-head"><span class="sid">s-02 · frontend</span><span class="status st-running"><span class="glyph" aria-hidden="true">●</span> running</span></div><p class="sc-model">claude code · sonnet</p><div class="sc-term" data-term="b"><p class="t-run"><span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> updating sign-in screen</p><p class="t-dim">keeping the session active</p><p class="t-dim">redirect flow next</p></div></div>
         <div class="session-card" data-ambient="c"><div class="sc-head"><span class="sid">s-03 · tests</span><span class="status st-attention"><span class="glyph" aria-hidden="true">!</span> retrying</span></div><p class="sc-model">gemini cli · pro</p><div class="sc-term"><p class="t-fail"><span class="glyph" aria-hidden="true">!</span><span class="sr-only">attention: </span> check failed</p><p class="t-run">retry loop · attempt 2</p><p class="t-dim">running checks again</p></div></div>
         <div class="session-card" data-ambient="d"><div class="sc-head"><span class="sid">s-04 · review</span><span class="status st-waiting"><span class="glyph" aria-hidden="true">◇</span> waiting</span></div><p class="sc-model">claude code · haiku</p><div class="sc-term"><p class="t-wait"><span class="glyph" aria-hidden="true">◇</span><span class="sr-only">waiting: </span> waiting on changes</p><p class="t-dim">final review queued</p><p class="t-dim">no notes yet</p></div></div>
       </div>
       <figcaption class="stage-caption">Example run · one goal across four visible sessions</figcaption>
     </figure>
+  </div>
+  <div class="hero-glance" aria-label="Example run at a glance">
+    <div class="glance-head"><p class="glance-label mono"><span class="glyph glyph-run" aria-hidden="true">●</span> RUN AT A GLANCE</p><p class="glance-now" data-glance-status>Goal locked</p></div>
+    <div class="glance-track">
+      <div class="glance-step is-active" data-glance-step="0"><span class="glance-phase mono">GOAL</span><strong>Ready</strong><span>Sign-in security</span></div>
+      <div class="glance-step" data-glance-step="1"><span class="glance-phase mono">WORK</span><strong>4 active</strong><span>Backend · interface · tests · review</span></div>
+      <div class="glance-step" data-glance-step="2"><span class="glance-phase mono">CHECK</span><strong>Retrying</strong><span>Attempt 2</span></div>
+      <div class="glance-step" data-glance-step="3"><span class="glance-phase mono">REVIEW</span><strong>Waiting</strong><span>1 decision left</span></div>
+    </div>
   </div>
 </section>
 

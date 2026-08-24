@@ -191,16 +191,19 @@
   var termA = document.querySelector('[data-term="a"]');
   var termB = document.querySelector('[data-term="b"]');
   var cmdStatus = document.querySelector('[data-cmd-status]');
+  var glanceSteps = document.querySelectorAll('[data-glance-step]');
+  var glanceStatus = document.querySelector('[data-glance-status]');
+  var GLANCE_LABELS = ['Goal locked', 'Work moving', 'Checks running', 'Ready for you'];
 
   var A_LINES = [
-    ['<span class="ps1">$</span> claude -p "migrate session middleware"', '<span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> editing src/auth/middleware.ts', '+47 −12 · 3 files'],
-    ['<span class="glyph" aria-hidden="true">●</span> running: npm test -- auth', '<span class="glyph" aria-hidden="true">✓</span><span class="sr-only">complete: </span> 31 passed · 3 skipped', 'writing refresh-token rotation'],
-    ['<span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> editing src/auth/session.ts', 'worktree: wt/backend-auth', '+63 −20 · 4 files']
+    ['<span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> working on sign-in backend', 'updating session handling', '3 files changed'],
+    ['<span class="glyph" aria-hidden="true">●</span> running sign-in checks', '<span class="glyph" aria-hidden="true">✓</span><span class="sr-only">complete: </span> 31 passed · 3 skipped', 'strengthening token rotation'],
+    ['<span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> updating sign-in session', 'separate backend workspace', '4 files changed']
   ];
   var B_LINES = [
-    ['<span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> updating LoginForm.tsx', 'token refresh on focus', ''],
-    ['<span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> updating AuthProvider.tsx', 'context: session expiry', ''],
-    ['<span class="glyph" aria-hidden="true">✓</span><span class="sr-only">complete: </span> lint clean · 0 warnings', '<span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> wiring redirect flow', '']
+    ['<span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> updating sign-in screen', 'keeping the session active', ''],
+    ['<span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> connecting the new flow', 'handling session expiry', ''],
+    ['<span class="glyph" aria-hidden="true">✓</span><span class="sr-only">complete: </span> interface checks passed', '<span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> finishing redirect flow', '']
   ];
   var CMD_STATES = [
     ['◐', 'planning', 'st-thinking'],
@@ -208,6 +211,13 @@
     ['●', 'monitoring', 'st-running']
   ];
   var heroTick = 0;
+  var setGlance = function (index) {
+    glanceSteps.forEach(function (step, i) {
+      step.classList.toggle('is-active', i === index);
+      step.classList.toggle('is-past', i < index);
+    });
+    if (glanceStatus) glanceStatus.textContent = GLANCE_LABELS[index];
+  };
   var renderTermLines = function (term, lines) {
     if (!term) return;
     var kids = term.children;
@@ -225,6 +235,7 @@
   };
   ambient(heroStage, function () {
     heroTick++;
+    setGlance(heroTick % glanceSteps.length);
     renderTermLines(termA, A_LINES[heroTick % A_LINES.length]);
     if (heroTick % 2 === 0) renderTermLines(termB, B_LINES[(heroTick / 2) % B_LINES.length]);
     if (cmdStatus) {
@@ -233,6 +244,25 @@
       cmdStatus.className = 'status ' + st[2];
     }
   }, 3400);
+
+  /* Subtle pointer response keeps Mission Control feeling like an instrument. */
+  if (heroStage && !reduceMotion && window.matchMedia('(pointer: fine)').matches) {
+    heroStage.addEventListener('pointermove', function (event) {
+      var rect = heroStage.getBoundingClientRect();
+      var x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+      var y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
+      heroStage.style.setProperty('--tilt-x', ((0.5 - y) * 1.8).toFixed(2) + 'deg');
+      heroStage.style.setProperty('--tilt-y', ((x - 0.5) * 2.2).toFixed(2) + 'deg');
+      heroStage.style.setProperty('--glint-x', (x * 100).toFixed(1) + '%');
+      heroStage.style.setProperty('--glint-y', (y * 100).toFixed(1) + '%');
+    });
+    heroStage.addEventListener('pointerleave', function () {
+      heroStage.style.setProperty('--tilt-x', '0deg');
+      heroStage.style.setProperty('--tilt-y', '0deg');
+      heroStage.style.setProperty('--glint-x', '72%');
+      heroStage.style.setProperty('--glint-y', '18%');
+    });
+  }
 
   /* ── mission control ambient: statuses tick realistically ── */
   var mc = document.querySelector('.mc');

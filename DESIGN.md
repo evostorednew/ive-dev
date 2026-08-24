@@ -42,6 +42,11 @@ status glyph vocabulary, and a visible verification gate. This is the primary
 product expression; it is HTML, not an image. Its caption identifies it as a
 product-derived interaction concept rather than a recording.
 
+The signature moment is the living Mission Control instrument: a restrained
+pointer tilt, one passing specular glint, moving session progress, and a
+four-step “Run at a glance” rail. The motion exposes state and direction; it is
+never a decorative particle field.
+
 The end-to-end run retains the scroll-driven branch / execute / verify / merge
 story. Its no-JavaScript and reduced-motion form is the fully expanded final
 state.
@@ -131,7 +136,9 @@ Rules:
 
 - Amber is earned by live/running marks and the two run actions only.
 - Blue is reserved for routes, architecture paths, and routing links.
-- No gradients, glow/blur shadows, purple, or decorative saturation.
+- No broad multicolor gradients, neon glow, purple, or decorative saturation.
+  The hero may use a low-opacity grid, a contained amber signal field, and one
+  white/amber specular glint to make Mission Control feel physically present.
 - The focus ring remains visible on every interactive control.
 
 ## Status language
@@ -187,6 +194,10 @@ the dedicated Architecture page or in the repository documentation.
 Grammar: **Branch → Execute → Verify → Proof.**
 
 - The end-to-end run uses CSS transforms with vanilla JavaScript.
+- The hero enters as one orchestrated sequence; Mission Control may respond by
+  no more than 2.2 degrees to a fine pointer.
+- “Run at a glance” advances with the example state and always remains readable
+  without motion.
 - Ambient changes are sparse and product-relevant.
 - `prefers-reduced-motion` removes ambient and scroll animation, expands the run
   to its final state.
@@ -223,7 +234,8 @@ Grammar: **Branch → Execute → Verify → Proof.**
 
 ## Anti-patterns (hard bans)
 
-- Purple/violet, neon cyan+magenta, glows, star fields, orbs, sparkle icons.
+- Purple/violet, neon cyan+magenta, diffuse neon glows, star fields, orbs, or
+  sparkle icons. A contained surface glint is allowed only in the hero.
 - Matrix green, hacker cosplay, ASCII art as decoration.
 - Cards for everything; icon-grid feature walls; decorative bento layouts.
 - Generic node graphs, neural imagery, robot/AI-head illustrations.
