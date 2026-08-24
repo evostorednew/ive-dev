@@ -713,6 +713,54 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
 .hero-chip-row { gap: 6px; margin-top: 16px; }
 .hero-chip-row .chip { padding: 3px 8px; font-size: 10.5px; }
 
+.origin-mark {
+  width: fit-content;
+  min-height: 38px;
+  margin-top: 18px;
+  display: inline-grid;
+  grid-template-columns: auto auto auto;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-chip);
+  color: var(--text-dim);
+  text-decoration: none;
+  background: color-mix(in srgb, var(--bg-raised) 78%, transparent);
+  transition: border-color var(--fast), color var(--fast), transform var(--fast), box-shadow var(--fast);
+}
+.origin-mark:hover {
+  color: var(--text);
+  border-color: var(--route);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--route) 10%, transparent);
+}
+.origin-eu,
+.origin-from,
+.origin-arrow {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.055em;
+}
+.origin-eu {
+  gap: 7px;
+  padding: 0 11px;
+  color: var(--route-ink);
+  background: color-mix(in srgb, var(--route) 9%, transparent);
+  border-right: 1px solid var(--line);
+}
+.origin-signal {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--running);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--running) 16%, transparent);
+}
+.origin-from { padding: 0 10px 0 12px; text-transform: lowercase; }
+.origin-from strong { margin-left: 0.45em; color: var(--text); font-weight: 600; }
+.origin-arrow { padding: 0 10px 0 2px; color: var(--route-ink); font-size: 13px; }
+
 .subgrid {
   display: grid; grid-template-columns: repeat(3, 1fr);
   gap: 36px 32px; margin-top: 58px;
@@ -1142,6 +1190,8 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
   font-size: 13px; color: var(--text-dim); text-decoration: none;
 }
 .footer-links a:hover { color: var(--text); }
+.footer-links a:first-child { color: var(--route-ink); }
+.footer-links a:first-child:hover { color: var(--text); }
 .footer-license { grid-column: 1 / -1; font-size: 11px; color: var(--text-faint); padding-top: 10px; border-top: 1px solid var(--line); }
 
 /* ── reveal ────────────────────────────────────────────────── */

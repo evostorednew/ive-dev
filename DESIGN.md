@@ -18,6 +18,11 @@ visible parallel work and returns as one result a person can review.
 wordmark. It is never a headline or product claim. The final invitation is
 “Let the work move. Keep the final say.”
 
+IVE’s provenance is expressed as “EU-based · from AI for Gov,” with AI for Gov
+linked to `https://aiforgov.eu/`. “EU-backed” is not used because it can imply
+institutional EU funding or endorsement; no such claim is part of the verified
+product truth.
+
 No character, avatar, robot, employee, personality, or workforce metaphor is
 used. Commander is a product control, not a persona.
 
