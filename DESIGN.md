@@ -14,9 +14,10 @@ IVE is the local control room for parallel coding work. The website presents a
 clear outcome, not a collection of implementation details: one goal becomes
 visible parallel work and returns as one result a person can review.
 
-“Humanity’s Last IDE” is a small legacy brand line used only in the footer
-wordmark. It is never a headline or product claim. The final invitation is
-“Let the work move. Keep the final say.”
+The final invitation is “Let the work move. Keep the final say.” The footer is
+strictly factual: IVE, its relationship to AI for Gov, relevant links, its
+EU-based origin, and its Apache 2.0 license. Decorative system-status language
+and compressed technical metadata do not appear there.
 
 IVE’s provenance is expressed as “EU-based · from AI for Gov,” with AI for Gov
 linked to `https://aiforgov.eu/`. “EU-backed” is not used because it can imply
