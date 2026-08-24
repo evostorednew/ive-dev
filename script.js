@@ -83,7 +83,7 @@
   var rbIter = document.querySelector('[data-ralph-i]');
   var storyRalphTimer = null;
   var storyRalphState = 0;
-  var STORY_WORDS = ['execute', 'verify', 'fix'];
+  var STORY_WORDS = ['work', 'check', 'fix'];
 
   var setStep = function (step) {
     if (step === currentStep) return;
@@ -134,7 +134,7 @@
     stage.classList.add('story-static');
     clearStorySteps();
     stopStoryRalph();
-    if (rbWord) rbWord.textContent = 'resolved';
+    if (rbWord) rbWord.textContent = 'passed';
     if (rbIter) rbIter.textContent = '2';
   };
 

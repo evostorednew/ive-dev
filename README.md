@@ -14,7 +14,7 @@ Then open `http://localhost:8000/`. The pages also work directly from `file://`.
 
 ## File map
 
-- `index.html` — 13-block homepage organized as REQUEST → ROUTE → EXECUTE → VERIFY → PROOF
+- `index.html` — 9-block homepage that explains IVE as GOAL → PLAN → WORK → CHECK → REVIEW
 - `architecture.html` — engineering architecture page using the same design system
 - `imprint.html` and `privacy.html` — legal provider information and site-specific privacy notice
 - `404.html` — self-contained not-found page

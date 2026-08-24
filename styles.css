@@ -511,7 +511,7 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
 
 /* ── story (signature scroll) ──────────────────────────────── */
 .story { position: relative; }
-.story-scroll { height: 640vh; }
+.story-scroll { height: 440vh; }
 .story-pin {
   position: static; height: auto;
   display: flex; align-items: center;
@@ -1164,7 +1164,7 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
 
 @media (max-width: 860px) {
   .nav-links { display: none; }
-  .story { height: 560vh; }
+  .story-scroll { height: 420vh; }
   .story-lanes { grid-template-columns: repeat(2, 1fr); }
   .merge-lines { grid-template-columns: repeat(2, 1fr); }
   .merge-lines::after { left: 25%; right: 25%; }

@@ -11,13 +11,12 @@ block in `README.md`. No capability may be shown that is absent from those.
 **Run agents. Keep control.**
 
 IVE is the local control room for parallel coding work. The website presents a
-controlled run, not a collection of features: one request is routed into real
-sessions, executed in view, held at verification gates, and returned as proof.
+clear outcome, not a collection of implementation details: one goal becomes
+visible parallel work and returns as one result a person can review.
 
-The language is hybrid. “Humanity’s Last IDE” is a small legacy brand line used
-only in the hero eyebrow and footer wordmark. It is never a headline or product
-claim. The final invitation remains “Stop switching tabs. Start commanding
-agents.”
+“Humanity’s Last IDE” is a small legacy brand line used only in the footer
+wordmark. It is never a headline or product claim. The final invitation is
+“Let the work move. Keep the final say.”
 
 No character, avatar, robot, employee, personality, or workforce metaphor is
 used. Commander is a product control, not a persona.
@@ -26,13 +25,16 @@ used. Commander is a product control, not a persona.
 
 **A controlled run, live in Mission Control.**
 
-The five phases are the structural grammar:
+The five product phases remain the internal structural grammar:
 
 `REQUEST → ROUTE → EXECUTE → VERIFY → PROOF`
 
-The mono eyebrow in each main section carries its phase and names that
-section's role in the run. The phases stay embedded in the information
-hierarchy instead of occupying a separate viewport control.
+The public homepage translates that system into immediate language:
+
+`GOAL → PLAN → WORK → CHECK → REVIEW`
+
+Section eyebrows name the reader’s question or benefit — “Why IVE,” “How it
+works,” “Your decision” — instead of exposing internal phase terminology.
 
 The hero’s right column is a live Mission Control composition with a Commander,
 four parallel sessions, real terminal output, supported model labels, the
@@ -115,9 +117,8 @@ DARK
 --route / --route-ink #6BB6C9 · --focus #FFB454
 ```
 
-Mission Control, security/deployment, the architecture security ledger, and the
-footer use the secondary ground. Review-and-intervention remains an explicit
-opposite-ground verification field.
+Mission Control, the architecture security ledger, and the footer use the
+secondary ground. Human review remains the explicit opposite-ground moment.
 
 The high-intent hero and final CTAs use the execution accent:
 
@@ -146,15 +147,15 @@ communicate without color.
 
 - Twelve-column fluid grid, 1480px maximum content width, 8px base spacing.
 - Strongly left aligned and deliberately asymmetric.
-- Run phases are carried by section eyebrows and reserve no viewport edge or
-  content column.
+- Section eyebrows carry plain-language orientation and reserve no viewport
+  edge or content column.
 - Raw page plus hairline rules is the default surface.
 - Panels are reserved for product UI: terminals, session tiles, board columns,
   run ledgers, and generated briefings.
 - Marketing copy never sits in a card.
-- Section rhythm stays uneven: thesis → counted proof → open problem → dense run
-  → four pillars → calm architecture → inverted review → technical evidence →
-  simple final action.
+- Section rhythm stays uneven: thesis → human problem → visible run → four
+  outcomes → inverted human review → local trust → concrete examples → simple
+  final action.
 
 ## Information architecture
 
@@ -162,19 +163,16 @@ The homepage contains exactly these blocks, in order:
 
 1. Header
 2. Hero: the controlled run
-3. Provable proof strip
-4. The control gap
-5. End-to-end run
-6. Four product pillars
-7. Architecture
-8. Review and intervention
-9. Compatibility
-10. Security and deployment
-11. Open-source evidence
-12. Three use cases
-13. Final CTA
+3. Why IVE
+4. How it works
+5. Four user outcomes
+6. Human review and decision
+7. Open-source and local trust
+8. Three concrete use cases
+9. Final CTA
 
-Every main section carries one visible phase eyebrow from the five-phase run.
+Architecture, implementation totals, and the deeper security surface belong on
+the dedicated Architecture page or in the repository documentation.
 
 ## Radius and surface
 
@@ -196,9 +194,15 @@ Grammar: **Branch → Execute → Verify → Proof.**
 
 ## Voice
 
-- Technical, confident, direct. Short declarative sentences.
-- Benefit first, mechanism second, implementation detail in small mono.
-- Describe controls and proof states, not personalities.
+- Clear, confident, and human. Short declarative sentences.
+- Begin with the relief or outcome: less coordination, one clear overview, one
+  result to review, and the user’s final say.
+- Use words a product user recognizes: goal, task, work, check, result, review.
+  Keep route, PTY, MCP, worktree, event bus, and implementation details off the
+  first explanatory layer.
+- Benefit first, mechanism second. Put deep implementation detail on the
+  Architecture page.
+- Describe controls and review states, not personalities.
 - Compatibility copy says what is supported today. Anything else is explicitly
   labeled roadmap.
 - No corporate filler, meme voice, grandiosity, or workforce metaphor.
@@ -212,8 +216,8 @@ Grammar: **Branch → Execute → Verify → Proof.**
 - Allowed totals: 140+ API routes, 40+ shortcuts, 35+ MCP tools, 30+ event
   types, 20 RALPH iterations maximum, 8,000+ skills, 6 board columns, 9 package
   scan steps, 3 access modes, and 4 memory types.
-- Numeric product totals sit beside the visible source line: “Alpha snapshot ·
-  counted in github.com/vibe2vibe/ive”.
+- When numeric product totals are shown, they sit beside the visible source
+  line: “Alpha snapshot · counted in github.com/vibe2vibe/ive”.
 - No customer claims, social proof, release dates, version numbers, OS matrix,
   unverified metrics, or unsupported integrations.
 
