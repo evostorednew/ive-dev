@@ -79,6 +79,65 @@
   --invert-line: #D9D8D2;
 }
 
+/* 60 / 30 / 10 palette: the page stays predominantly on the cool light
+   work surface; these bounded control fields provide the anthracite 30%.
+   Amber marks active execution and blue marks routing, never decoration. */
+.surface-secondary {
+  --bg: #15171A;
+  --bg-raised: #1E2125;
+  --bg-inset: #111316;
+  --bg-glass: rgba(21, 23, 26, 0.88);
+  --on-accent: #15171A;
+  --line: #2B2F34;
+  --line-strong: #444A51;
+  --text: #F4F5F6;
+  --text-dim: #B5BBC2;
+  --text-faint: #8E969F;
+  --running: #FFB454;
+  --running-ink: #FFB454;
+  --complete: #7DCE82;
+  --complete-ink: #7DCE82;
+  --waiting: #98A0A8;
+  --waiting-ink: #98A0A8;
+  --attention: #F06A58;
+  --attention-ink: #F06A58;
+  --route: #6F91FF;
+  --route-ink: #8AA5FF;
+  --focus: #FFB454;
+  background: var(--bg);
+  color: var(--text);
+}
+
+:root[data-theme="dark"] .surface-secondary {
+  --bg: #F4F5F6;
+  --bg-raised: #FFFFFF;
+  --bg-inset: #EBEDEF;
+  --bg-glass: rgba(244, 245, 246, 0.88);
+  --on-accent: #15171A;
+  --line: #DDE0E3;
+  --line-strong: #BFC4C9;
+  --text: #15171A;
+  --text-dim: #4A4F55;
+  --text-faint: #6B7178;
+  --running: #FFB000;
+  --running-ink: #8A5200;
+  --complete: #087A4B;
+  --complete-ink: #066B41;
+  --waiting: #98A0A8;
+  --waiting-ink: #5A6067;
+  --attention: #C83B24;
+  --attention-ink: #A82F1B;
+  --route: #1647FF;
+  --route-ink: #0E36C7;
+  --focus: #1647FF;
+}
+
+.surface-secondary.chapter,
+.surface-secondary.arch-section {
+  box-shadow: 0 0 0 100vmax var(--bg);
+  clip-path: inset(0 -100vmax);
+}
+
 /* ── reset ─────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -318,9 +377,9 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
 /* hero stage — the living mission control */
 .hero-stage {
   background: var(--bg-raised);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: var(--r-panel);
-  padding: 18px;
+  padding: clamp(16px, 2vw, 24px);
 }
 .stage-head {
   display: flex; justify-content: space-between; align-items: center;
@@ -339,6 +398,7 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
 .commander-card {
   background: var(--bg-inset);
   border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--running);
   border-radius: var(--r-panel);
   padding: 12px 14px;
   position: relative;
@@ -412,6 +472,17 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
   font-family: var(--mono); font-size: 10.5px; color: var(--text-faint);
   padding: 12px 2px 0; letter-spacing: 0.03em;
 }
+
+.hero .btn-primary,
+.final .btn-primary {
+  background: var(--running);
+  color: var(--on-accent);
+}
+.hero .btn-primary:hover,
+.final .btn-primary:hover { background: color-mix(in srgb, var(--running) 84%, var(--text)); }
+.text-link { color: var(--route-ink); }
+.text-link:hover { color: var(--route); }
+.pillar-route { border-top-color: color-mix(in srgb, var(--route) 72%, var(--line-strong)); }
 
 /* ── statement ─────────────────────────────────────────────── */
 .statement { padding: clamp(110px, 16vh, 190px) 0; }
@@ -1064,7 +1135,7 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
 .footer-full { font-size: 12.5px; color: var(--text-faint); }
 .footer-status { font-size: 11px; color: var(--text-dim); }
 .footer-status .glyph-run { color: var(--running-ink); }
-.footer-links { display: flex; gap: 22px; justify-content: flex-end; }
+.footer-links { display: flex; flex-wrap: wrap; gap: 8px 22px; justify-content: flex-end; }
 .footer-links a {
   font-size: 13px; color: var(--text-dim); text-decoration: none;
 }
@@ -1854,4 +1925,63 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
   .use-case { grid-template-columns: 1fr; gap: 12px; }
   .use-case > p:not(.use-case-phase):not(.use-case-proof), .use-case-proof { grid-column: 1; }
   .final .install { width: 100%; }
+}
+
+/* Accent allocation sits last so the information-architecture overrides above
+   cannot turn routing and execution cues back into neutral decoration. */
+.chapter .text-link { color: var(--route-ink); }
+.chapter .text-link:hover { color: var(--route); }
+.pillar-list .pillar-route { border-top-color: color-mix(in srgb, var(--route) 72%, var(--line-strong)); }
+
+/* Legal pages use the same run-ledger grammar without turning legal copy into
+   marketing cards. Headings name the obligation; the right column carries it. */
+.legal-main {
+  max-width: 1120px;
+  min-height: 76vh;
+  margin: 0 auto;
+  padding: clamp(148px, 18vh, 202px) var(--pad) clamp(96px, 13vh, 150px);
+}
+.legal-head { max-width: 820px; margin-bottom: clamp(64px, 9vh, 104px); }
+.legal-head h1 {
+  margin: 22px 0 20px;
+  font-size: clamp(42px, 4.6vw, 66px);
+  font-weight: 620;
+  letter-spacing: -0.045em;
+  line-height: 1.01;
+}
+.legal-head > p:last-child { color: var(--text-dim); font-size: 18px; }
+.legal-sections { border-top: 1px solid var(--line-strong); }
+.legal-section {
+  display: grid;
+  grid-template-columns: minmax(210px, 4fr) minmax(0, 8fr);
+  gap: clamp(30px, 6vw, 84px);
+  padding: 34px 0 38px;
+  border-bottom: 1px solid var(--line);
+}
+.legal-section h2 {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.legal-copy { max-width: 70ch; color: var(--text-dim); font-size: 16px; }
+.legal-copy p + p { margin-top: 16px; }
+.legal-copy strong { color: var(--text); }
+.legal-copy a { color: var(--route-ink); text-underline-offset: 3px; }
+.legal-copy code {
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: var(--bg-inset);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.86em;
+}
+.legal-page .footer-links [aria-current="page"] { color: var(--text); }
+
+@media (max-width: 720px) {
+  .legal-section { grid-template-columns: 1fr; gap: 10px; }
+  .legal-head > p:last-child { font-size: 16px; }
 }

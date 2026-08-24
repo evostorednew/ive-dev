@@ -8,6 +8,7 @@
   /* ── theme ───────────────────────────────────────────── */
   var themeMeta = document.querySelector('meta[name="theme-color"]');
   var themeToggles = document.querySelectorAll('[data-theme-toggle]');
+  var isGerman = document.documentElement.lang === 'de';
 
   function readTheme() {
     try {
@@ -23,7 +24,9 @@
     themeToggles.forEach(function (toggle) {
       toggle.textContent = isDark ? '● DARK' : '○ LIGHT';
       toggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-      toggle.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+      toggle.setAttribute('aria-label', isGerman
+        ? (isDark ? 'Zum hellen Farbschema wechseln' : 'Zum dunklen Farbschema wechseln')
+        : (isDark ? 'Switch to light theme' : 'Switch to dark theme'));
     });
     if (themeMeta) {
       themeMeta.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim());

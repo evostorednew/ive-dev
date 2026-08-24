@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>(function(){try{var t=localStorage.getItem('ive-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#F3F7F5">
+<meta name="theme-color" content="#F4F5F6">
 <title>IVE — Run agents. Keep control.</title>
 <meta name="description" content="IVE is the local control room for parallel coding work. Run Claude Code and Gemini CLI sessions in real terminals, route the work, and keep the proof in view.">
 <link rel="canonical" href="https://ive.dev/">
@@ -18,10 +18,8 @@
 <meta name="twitter:title" content="IVE — Run agents. Keep control.">
 <meta name="twitter:description" content="A local control room for parallel coding work: real terminals, routed sessions, verification, and proof.">
 <meta name="twitter:image" content="https://ive.dev/assets/og.png">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23F3F7F5'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23071611'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Inter:wght@400..800&amp;display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23F4F5F6'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%2315171A'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -53,16 +51,23 @@
       <p class="hero-install"><span class="ps1" aria-hidden="true">$</span> git clone https://github.com/vibe2vibe/ive <span class="dim">· then ./start.sh</span></p>
     </div>
 
-    <figure class="run-ledger" aria-labelledby="ledger-title">
-      <div class="ledger-head" id="ledger-title"><span>RUN LEDGER · auth-pkce</span><span class="status st-done"><span class="glyph" aria-hidden="true">✓</span> complete</span></div>
-      <div class="ledger-request"><span class="ledger-phase">REQUEST</span><span class="ledger-objective">Migrate auth flow to PKCE</span></div>
-      <div class="ledger-tree" role="group" aria-label="Three completed sessions, including a test gate that failed and was resolved">
-        <div class="ledger-row"><span class="ledger-branch" aria-hidden="true">├─</span><span class="sid">s-01 / API</span><span class="ledger-model">CLAUDE CODE · OPUS</span><span class="status st-done"><span class="glyph" aria-hidden="true">✓</span> complete</span></div>
-        <div class="ledger-row ledger-row-gate"><span class="ledger-branch" aria-hidden="true">├─</span><span class="sid">s-02 / TEST</span><span class="ledger-model">GEMINI CLI · PRO</span><span class="status st-attention"><span class="glyph" aria-hidden="true">!</span> gate · rounding</span><span class="ledger-recovery"><span class="mono">@ralph · iteration 2</span> <span class="status st-done"><span class="glyph" aria-hidden="true">✓</span> pass</span></span></div>
-        <div class="ledger-row"><span class="ledger-branch" aria-hidden="true">└─</span><span class="sid">s-03 / REVIEW</span><span class="ledger-model">CLAUDE CODE · SONNET</span><span class="status st-done"><span class="glyph" aria-hidden="true">✓</span> complete</span></div>
+    <figure class="hero-stage surface-secondary" aria-label="Mission Control running four agent sessions under one Commander">
+      <div class="stage-head">
+        <span class="stage-title">MISSION CONTROL</span>
+        <span class="stage-count"><span class="glyph glyph-run" aria-hidden="true">●</span> <span data-agents-running>4</span> agents running</span>
       </div>
-      <div class="ledger-proof"><span class="glyph" aria-hidden="true">✓</span> PROOF / 14:32 <span>reviewable diff</span></div>
-      <figcaption class="fig-note">Static complete state · product-derived interaction concept · real PTY sessions · local control plane</figcaption>
+      <div class="commander-card" role="group" aria-label="Commander session">
+        <div class="sc-head"><span class="sid">commander</span><span class="model">claude code · opus</span><span class="status st-thinking" data-cmd-status><span class="glyph" aria-hidden="true">◐</span> planning</span></div>
+        <p class="cmd-objective">objective: <em>migrate authentication to PKCE</em></p>
+      </div>
+      <div class="stage-connectors" aria-hidden="true"><span class="conn c1"></span><span class="conn c2"></span><span class="conn c3"></span><span class="conn c4"></span></div>
+      <div class="stage-grid">
+        <div class="session-card" data-ambient="a"><div class="sc-head"><span class="sid">s-01 · backend</span><span class="status st-running"><span class="glyph" aria-hidden="true">●</span> running</span></div><p class="sc-model">claude code · opus</p><div class="sc-term" data-term="a"><p><span class="ps1">$</span> claude -p "migrate session middleware"</p><p class="t-run"><span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> editing src/auth/middleware.ts</p><p class="t-dim">+47 −12 · 3 files</p></div></div>
+        <div class="session-card" data-ambient="b"><div class="sc-head"><span class="sid">s-02 · frontend</span><span class="status st-running"><span class="glyph" aria-hidden="true">●</span> running</span></div><p class="sc-model">claude code · sonnet</p><div class="sc-term" data-term="b"><p class="t-run"><span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> updating LoginForm.tsx</p><p class="t-dim">token refresh on focus</p><p class="t-dim">redirect flow pending</p></div></div>
+        <div class="session-card" data-ambient="c"><div class="sc-head"><span class="sid">s-03 · tests</span><span class="status st-attention"><span class="glyph" aria-hidden="true">!</span> gate</span></div><p class="sc-model">gemini cli · pro</p><div class="sc-term"><p class="t-fail"><span class="glyph" aria-hidden="true">!</span><span class="sr-only">attention: </span> rounding assertion</p><p class="t-run">@ralph · iteration 2</p><p class="t-dim">verification running</p></div></div>
+        <div class="session-card" data-ambient="d"><div class="sc-head"><span class="sid">s-04 · review</span><span class="status st-waiting"><span class="glyph" aria-hidden="true">◇</span> waiting</span></div><p class="sc-model">claude code · haiku</p><div class="sc-term"><p class="t-wait"><span class="glyph" aria-hidden="true">◇</span><span class="sr-only">waiting: </span> waiting on diff</p><p class="t-dim">security review queued</p><p class="t-dim">0 annotations</p></div></div>
+      </div>
+      <figcaption class="stage-caption">Mission Control · product-derived interaction concept · parallel real PTY sessions</figcaption>
     </figure>
   </div>
 </section>
@@ -151,7 +156,7 @@
 </section>
 
 <!-- 10 · SECURITY AND DEPLOYMENT -->
-<section class="chapter security-deployment phase-section" data-phase="verify" aria-labelledby="security-title">
+<section class="chapter security-deployment surface-secondary phase-section" data-phase="verify" aria-labelledby="security-title">
   <div class="chapter-head"><p class="kicker"><span class="glyph st-attention-c" aria-hidden="true">!</span> VERIFY · SECURITY AND DEPLOYMENT</p><h2 id="security-title">Put controls in the execution path.</h2><p class="chapter-lede">Scan before install. Isolate before write. Enforce access before a tool runs. Keep every change in the audit trail.</p></div>
   <div class="security-ledger"><div><p class="security-label mono">SUPPLY CHAIN SHIELD</p><h3>Stop a bad package before it lands.</h3><p>AVCP intercepts <span class="mono">pip</span>, <span class="mono">npm</span> and GitHub Actions, then runs the documented package scan.</p></div><div><p class="security-label mono">WORKTREES + CONFLICTS</p><h3>Keep parallel writes isolated.</h3><p>Each session gets a git worktree. File locks detect collisions and reroute work before overwrite.</p></div><div><p class="security-label mono">ACCESS MODES</p><h3>Decide who can approve.</h3><p>Brief is scoped to tasks and notes. Code drives sessions in auto or plan with Bash allowlisting. Full is owner-equivalent and TTL-bounded.</p></div><div><p class="security-label mono">AUTH AUTOPILOT</p><h3>Keep account state separated.</h3><p>Quota events can rotate to the next OAuth account in LRU order. Each account uses a sandboxed HOME so cookies do not cross.</p></div></div>
   <div class="deployment-line"><div><p class="mono">COLLABORATION</p><p>Share a tunneled URL, a one-shot four-word invite or a QR token. Invites burn atomically and are rate-limited per IP.</p></div><div><p class="mono">REMOTE CONTROL</p><p>Add the PWA to a phone and receive Web Push notifications. Catch-up briefings restore context before intervention.</p></div><div><p class="mono">ENFORCEMENT</p><p>Route guards, CLI flag injection and PreToolUse hooks apply the active access mode independently.</p></div></div>
@@ -179,8 +184,8 @@
 
 </main>
 
-<footer class="footer">
-  <div class="footer-inner"><p class="footer-brand"><span class="wordmark-text">IVE</span> <span class="footer-full">Humanity&rsquo;s Last IDE</span></p><p class="footer-status mono"><span class="glyph glyph-run" aria-hidden="true">●</span><span class="sr-only">running: </span> system operational · local</p><nav class="footer-links" aria-label="Footer"><a href="https://github.com/vibe2vibe/ive" target="_blank" rel="noopener">GitHub</a><a href="https://github.com/vibe2vibe/ive#readme" target="_blank" rel="noopener">README</a><a href="https://github.com/vibe2vibe/ive/issues" target="_blank" rel="noopener">Issues</a></nav><p class="footer-license mono">Apache-2.0 · alpha · telemetry: anonymous, opt-out</p></div>
+<footer class="footer surface-secondary">
+  <div class="footer-inner"><p class="footer-brand"><span class="wordmark-text">IVE</span> <span class="footer-full">Humanity&rsquo;s Last IDE</span></p><p class="footer-status mono"><span class="glyph glyph-run" aria-hidden="true">●</span><span class="sr-only">running: </span> system operational · local</p><nav class="footer-links" aria-label="Footer"><a href="https://github.com/vibe2vibe/ive" target="_blank" rel="noopener">GitHub</a><a href="https://github.com/vibe2vibe/ive#readme" target="_blank" rel="noopener">README</a><a href="https://github.com/vibe2vibe/ive/issues" target="_blank" rel="noopener">Issues</a><a href="imprint.html">Imprint</a><a href="privacy.html">Privacy</a></nav><p class="footer-license mono">Apache-2.0 · alpha · telemetry: anonymous, opt-out</p></div>
 </footer>
 <script src="script.js" defer></script>
 </body>

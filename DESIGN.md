@@ -24,7 +24,7 @@ used. Commander is a product control, not a persona.
 
 ## Visual thesis
 
-**A run ledger that crosses the whole site.**
+**A controlled run, live in Mission Control.**
 
 The five phases are the structural grammar:
 
@@ -34,10 +34,11 @@ The mono eyebrow in each main section carries its phase and names that
 section's role in the run. The phases stay embedded in the information
 hierarchy instead of occupying a separate viewport control.
 
-The hero’s right column is a truthful, complete run ledger with real session
-IDs, supported model labels, the status glyph vocabulary, a failed test gate,
-and a resolved proof state. This is the primary product expression; it is not
-an image.
+The hero’s right column is a live Mission Control composition with a Commander,
+four parallel sessions, real terminal output, supported model labels, the
+status glyph vocabulary, and a visible verification gate. This is the primary
+product expression; it is HTML, not an image. Its caption identifies it as a
+product-derived interaction concept rather than a recording.
 
 The end-to-end run retains the scroll-driven branch / execute / verify / merge
 story. Its no-JavaScript and reduced-motion form is the fully expanded final
@@ -52,6 +53,9 @@ state.
 | Display | **Inter** (400–800) | H1, H2, concise product headlines, and wordmark. Weight 620, balanced wrapping, tight tracking, and leading at or above 1.01. |
 | Body | **Inter** (400–800) | All explanatory and marketing copy. 16–18px, generous leading, ~64ch maximum. |
 | Machine | **IBM Plex Mono** (400/500/600) | Terminals, session IDs, statuses, metadata, eyebrows, keyboard keys, install commands, ledgers. |
+
+Both families are self-hosted from `assets/fonts/`; production pages make no
+request to Google Fonts or another font CDN.
 
 Rules:
 
@@ -68,21 +72,22 @@ Rules:
 
 ## Color
 
-Light is primary and the default. Dark graphite is an explicit alternate stored
-by the theme toggle. Component rules do not branch on `[data-theme]`; theme
-differences belong in tokens.
+The page follows a 60 / 30 / 10 allocation. Roughly 60% is the cool light work
+surface, 30% is neutral anthracite across bounded control and verification
+fields, and 10% is functional accent. Amber means active execution; blue means
+routing. Dark mode reverses the grounds while preserving those roles.
 
 ```text
 LIGHT
---bg          #F3F7F5
+--bg          #F4F5F6
 --bg-raised   #FFFFFF
---bg-inset    #E9EFEC
---bg-glass    rgba(243, 247, 245, 0.82)
---line        #D5DFDB
---line-strong #B4C3BD
---text        #071611
---text-dim    #40544D
---text-faint  #5E706A
+--bg-inset    #EBEDEF
+--bg-glass    rgba(244, 245, 246, 0.82)
+--line        #DDE0E3
+--line-strong #BFC4C9
+--text        #15171A
+--text-dim    #4A4F55
+--text-faint  #6B7178
 ```
 
 Semantic colors split marks from readable ink:
@@ -90,7 +95,7 @@ Semantic colors split marks from readable ink:
 ```text
 --running       #FFB000   --running-ink   #8A5200
 --complete      #087A4B   --complete-ink  #066B41
---waiting       #8FA09A   --waiting-ink   #566661
+--waiting       #98A0A8   --waiting-ink   #5A6067
 --attention     #C83B24   --attention-ink #A82F1B
 --route         #1647FF   --route-ink     #0E36C7
 --focus         #1647FF
@@ -109,19 +114,21 @@ DARK
 --route / --route-ink #6BB6C9 · --focus #FFB454
 ```
 
-The review-and-intervention section is the single opposite-ground moment and
-uses only inversion tokens. Terminals remain on the primary theme ground.
+Mission Control, security/deployment, the architecture security ledger, and the
+footer use the secondary ground. Review-and-intervention remains an explicit
+opposite-ground verification field.
 
-The primary CTA is always an ink block with field text:
+The high-intent hero and final CTAs use the execution accent:
 
 ```css
-.btn-primary { background: var(--text); color: var(--bg); }
-.btn-primary:hover { background: var(--text-dim); }
+.hero .btn-primary,
+.final .btn-primary { background: var(--running); color: var(--on-accent); }
 ```
 
 Rules:
 
-- Amber is earned by live/running marks only.
+- Amber is earned by live/running marks and the two run actions only.
+- Blue is reserved for routes, architecture paths, and routing links.
 - No gradients, glow/blur shadows, purple, or decorative saturation.
 - The focus ring remains visible on every interactive control.
 
