@@ -35,8 +35,8 @@
   --invert-dim: #A6ADB4;
   --invert-line: #2B2F34;
   /* type */
-  --display: 'Inter', system-ui, -apple-system, sans-serif;
-  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --display: 'Archivo', system-ui, -apple-system, sans-serif;
+  --sans: 'Source Sans 3', system-ui, -apple-system, sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   /* geometry */
   --r-panel: 8px;
@@ -207,6 +207,8 @@ h1, h2, h3 {
   font-weight: 620;
   text-wrap: balance;
 }
+h1, h2, .wordmark-text, .stat-n, .merge-ready { font-stretch: 125%; }
+h3, .delegate-say { font-stretch: 112.5%; }
 h1 { letter-spacing: -0.045em; line-height: 1.01; }
 h2 { letter-spacing: -0.04em; line-height: 1.05; }
 h3 { letter-spacing: -0.02em; line-height: 1.15; }

@@ -21,7 +21,7 @@ Then open `http://localhost:8000/`. The pages also work directly from `file://`.
 - `styles.css` — shared design system and page styles
 - `script.js` — dependency-free theme, run-story, and copy behavior
 - `assets/og.html` — 1200×630 Open Graph image source
-- `assets/fonts.css` and `assets/fonts/` — self-hosted Inter and IBM Plex Mono, including OFL license texts
+- `assets/fonts.css` and `assets/fonts/` — self-hosted Archivo, Source Sans 3 and IBM Plex Mono, including OFL license texts
 - `DESIGN.md` — binding visual and interaction contract
 - `_reference-old-site-copy.txt` — product capability truth source
 

@@ -18,8 +18,8 @@
     --running: #8A5200;
     --complete: #066B41;
     --attention: #A82F1B;
-    --display: 'Inter', system-ui, sans-serif;
-    --body: 'Inter', system-ui, sans-serif;
+    --display: 'Archivo', system-ui, sans-serif;
+    --body: 'Source Sans 3', system-ui, sans-serif;
     --mono: 'IBM Plex Mono', ui-monospace, monospace;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,10 +27,10 @@
   body { background: var(--bg); color: var(--text); font-family: var(--body); -webkit-font-smoothing: antialiased; }
   main { width: 100%; height: 100%; display: grid; grid-template-columns: 5fr 7fr; gap: 62px; padding: 52px 58px; border: 1px solid var(--line); }
   .thesis { display: flex; flex-direction: column; min-width: 0; }
-  .brand { display: flex; align-items: baseline; gap: 10px; font-family: var(--display); font-size: 30px; font-weight: 800; }
+  .brand { display: flex; align-items: baseline; gap: 10px; font-family: var(--display); font-size: 30px; font-stretch: 125%; font-weight: 800; }
   .dot { width: 9px; height: 9px; border-radius: 50%; background: #FFB000; }
   .eyebrow { margin-top: auto; color: var(--faint); font: 500 11px/1.4 var(--mono); letter-spacing: 0.13em; text-transform: uppercase; }
-  h1 { margin: 18px 0 22px; font: 620 66px/1.01 var(--display); letter-spacing: -0.045em; text-wrap: balance; }
+  h1 { margin: 18px 0 22px; font: 620 66px/1.01 var(--display); font-stretch: 125%; letter-spacing: -0.045em; text-wrap: balance; }
   .lede { max-width: 34ch; color: var(--dim); font-size: 18px; line-height: 1.42; }
   .sequence { margin-top: auto; padding-top: 17px; border-top: 1px solid var(--line-strong); color: var(--faint); font: 500 10px/1 var(--mono); letter-spacing: 0.065em; }
   .ledger { align-self: center; min-width: 0; padding: 27px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--raised); font-family: var(--mono); }

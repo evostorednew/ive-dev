@@ -50,23 +50,24 @@ state.
 
 | Role | Face | Notes |
 |---|---|---|
-| Display | **Inter** (400–800) | H1, H2, concise product headlines, and wordmark. Weight 620, balanced wrapping, tight tracking, and leading at or above 1.01. |
-| Body | **Inter** (400–800) | All explanatory and marketing copy. 16–18px, generous leading, ~64ch maximum. |
+| Display | **Archivo** (500–800, width 100–125%) | H1, H2, concise product headlines, and wordmark. Expanded width gives the control-room voice a recognizable silhouette. |
+| Body | **Source Sans 3** (400–600) | All explanatory and marketing copy. 16–18px, generous leading, ~64ch maximum. |
 | Machine | **IBM Plex Mono** (400/500/600) | Terminals, session IDs, statuses, metadata, eyebrows, keyboard keys, install commands, ledgers. |
 
-Both families are self-hosted from `assets/fonts/`; production pages make no
+All three families are self-hosted from `assets/fonts/`; production pages make no
 request to Google Fonts or another font CDN.
 
 Rules:
 
-- Inter carries both the editorial and display voices; the separate tokens keep
-  those roles independently adjustable.
+- Archivo carries the display voice at 125% width for H1/H2 and 112.5% for
+  smaller display roles; its expanded construction is the typographic signature.
+- Source Sans 3 keeps explanatory copy calm and readable beside the wider display face.
 - Machine voice is IBM Plex Mono. Terminal output is never proportional.
 - The H1 is the largest expression. Chapters step down from it.
 - The size ladder is hero 42–66px, chapter 32–46px, statement 28–40px,
   use-case and section titles 22–30px, card titles 17–19px, and body 16–18px.
 - Headlines use weight 620, negative tracking from -0.045em at the largest size
-  toward -0.02em at the smallest, balanced wrapping, and 1.01–1.15 leading.
+  toward -0.02em at the smallest, balanced wrapping, expanded width, and 1.01–1.15 leading.
 - Section eyebrows use IBM Plex Mono at 11px/500, 0.13em tracking, and uppercase
   text; they encode run state.
 
