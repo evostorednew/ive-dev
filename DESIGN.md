@@ -14,10 +14,9 @@ IVE is the local control room for parallel coding work. The website presents a
 clear outcome, not a collection of implementation details: one goal becomes
 visible parallel work and returns as one result a person can review.
 
-The final invitation is “Let the work move. Keep the final say.” The footer is
-strictly factual: IVE, its relationship to AI for Gov, relevant links, its
-EU-based origin, and its Apache 2.0 license. Decorative system-status language
-and compressed technical metadata do not appear there.
+The footer is strictly factual: IVE, its relationship to AI for Gov, relevant
+links, its EU-based origin, and its Apache 2.0 license. Decorative system-status
+language and compressed technical metadata do not appear there.
 
 IVE’s provenance is expressed as “EU-based · from AI for Gov,” with AI for Gov
 linked to `https://aiforgov.eu/`. “EU-backed” is not used because it can imply
@@ -212,8 +211,8 @@ Grammar: **Branch → Execute → Verify → Proof.**
 ## Voice
 
 - Clear, confident, and human. Short declarative sentences.
-- Begin with the relief or outcome: less coordination, one clear overview, one
-  result to review, and the user’s final say.
+- State the user-visible action or result directly: one goal, separate tasks,
+  visible checks, and one result to review.
 - Use words a product user recognizes: goal, task, work, check, result, review.
   Keep route, PTY, MCP, worktree, event bus, and implementation details off the
   first explanatory layer.
@@ -223,11 +222,17 @@ Grammar: **Branch → Execute → Verify → Proof.**
 - Compatibility copy says what is supported today. Anything else is explicitly
   labeled roadmap.
 - No corporate filler, meme voice, grandiosity, or workforce metaphor.
+- No decorative system messages, fake operational states, or internal phase
+  labels in public copy. Status glyphs belong only to product states inside
+  diagrams and demonstrations.
+- Avoid compressed slogans when one factual sentence can explain the same
+  thing. Buttons name the page or action they actually open.
 
 ## Honesty constraints
 
 - Alpha status and Apache-2.0 are stated plainly.
-- Anonymous opt-out telemetry is stated plainly.
+- If product telemetry is discussed, explain it in plain prose next to the
+  relevant technical documentation rather than compressing it into metadata.
 - Supported CLIs: Claude Code and Gemini CLI only.
 - Supported models: Haiku, Sonnet, Opus, Gemini Pro, and Flash only.
 - Allowed totals: 140+ API routes, 40+ shortcuts, 35+ MCP tools, 30+ event

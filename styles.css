@@ -744,18 +744,10 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
   letter-spacing: 0.055em;
 }
 .origin-eu {
-  gap: 7px;
   padding: 0 11px;
   color: var(--route-ink);
   background: color-mix(in srgb, var(--route) 9%, transparent);
   border-right: 1px solid var(--line);
-}
-.origin-signal {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--running);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--running) 16%, transparent);
 }
 .origin-from { padding: 0 10px 0 12px; text-transform: lowercase; }
 .origin-from strong { margin-left: 0.45em; color: var(--text); font-weight: 600; }

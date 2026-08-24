@@ -22,7 +22,7 @@
     var isDark = theme === 'dark';
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
     themeToggles.forEach(function (toggle) {
-      toggle.textContent = isDark ? '● DARK' : '○ LIGHT';
+      toggle.textContent = isDark ? 'Dark' : 'Light';
       toggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
       toggle.setAttribute('aria-label', isGerman
         ? (isDark ? 'Zum hellen Farbschema wechseln' : 'Zum dunklen Farbschema wechseln')
@@ -193,7 +193,7 @@
   var cmdStatus = document.querySelector('[data-cmd-status]');
   var glanceSteps = document.querySelectorAll('[data-glance-step]');
   var glanceStatus = document.querySelector('[data-glance-status]');
-  var GLANCE_LABELS = ['Goal locked', 'Work moving', 'Checks running', 'Ready for you'];
+  var GLANCE_LABELS = ['Goal received', '4 tasks running', 'Tests running', 'Ready to review'];
 
   var A_LINES = [
     ['<span class="glyph" aria-hidden="true">●</span><span class="sr-only">running: </span> working on sign-in backend', 'updating session handling', '3 files changed'],

@@ -31,13 +31,13 @@
       <span class="wordmark-text">IVE</span><span class="wordmark-dot" aria-hidden="true"></span>
     </a>
     <nav class="nav-links" aria-label="Main">
-      <a href="index.html#route">Product</a>
-      <a href="index.html#operation">Workflows</a>
+      <a href="index.html#why">Why IVE</a>
+      <a href="index.html#operation">How it works</a>
       <a href="architecture.html" aria-current="page">Architecture</a>
       <a href="index.html#open-source">Open&nbsp;Source</a>
       <a class="nav-gh" href="https://github.com/vibe2vibe/ive" target="_blank" rel="noopener">GitHub</a>
     </nav>
-    <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme" data-theme-toggle>○ LIGHT</button>
+    <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme" data-theme-toggle>Light</button>
     <a class="btn btn-primary nav-cta" href="index.html#get-ive">Get IVE</a>
   </div>
 </header>
@@ -45,7 +45,7 @@
 <main id="main">
   <header class="arch-hero phase-section" id="arch-request" data-phase="request">
     <div class="arch-hero-inner">
-      <p class="kicker"><span class="glyph" aria-hidden="true">○</span> REQUEST · ARCHITECTURE</p>
+      <p class="kicker">ARCHITECTURE</p>
       <h1>What actually runs<br>on your machine.</h1>
       <p class="arch-lede">A local Python control plane opens real terminals, tracks every state change in SQLite, and exposes the operation to one React interface.</p>
     </div>
@@ -53,10 +53,10 @@
 
   <section class="arch-section arch-process phase-section" id="arch-route" data-phase="route" aria-labelledby="process-title">
     <div class="arch-section-head">
-      <p class="kicker"><span class="glyph st-thinking-c" aria-hidden="true">◐</span> ROUTE · PROCESS MODEL</p>
+      <p class="kicker">PROCESS MODEL</p>
       <div>
-        <h2 id="process-title">One backend. Many real processes.</h2>
-        <p>The browser controls the operation. The backend owns the processes and the state.</p>
+        <h2 id="process-title">A local backend manages each process.</h2>
+        <p>The browser sends commands. The backend owns the agent processes and their state.</p>
       </div>
     </div>
 
@@ -109,10 +109,10 @@
 
   <section class="arch-section arch-events phase-section" id="arch-execute" data-phase="execute" aria-labelledby="events-title">
     <div class="arch-section-head">
-      <p class="kicker"><span class="glyph glyph-run" aria-hidden="true">●</span> EXECUTE · EVENT BUS</p>
+      <p class="kicker">EVENT FLOW</p>
       <div>
-        <h2 id="events-title">A state change takes one path.</h2>
-        <p>Every consumer sees the same ordered change.</p>
+        <h2 id="events-title">Every state change is recorded once.</h2>
+        <p>The same ordered event is then sent to subscribers, the interface, and webhooks.</p>
       </div>
     </div>
 
@@ -123,7 +123,7 @@
         <li><span class="arch-step">03</span><strong>Broadcast</strong><code>WebSocket</code></li>
         <li><span class="arch-step">04</span><strong>Deliver</strong><code>webhooks</code></li>
       </ol>
-      <figcaption>One event record. Multiple delivery surfaces.</figcaption>
+      <figcaption>The event is recorded in SQLite before it is sent to subscribers, WebSocket clients, and webhooks.</figcaption>
     </figure>
     <ul class="arch-event-kinds" aria-label="Tracked event categories">
       <li>session lifecycle</li>
@@ -135,10 +135,10 @@
 
   <section class="arch-section arch-isolation phase-section" id="arch-verify" data-phase="verify" aria-labelledby="isolation-title">
     <div class="arch-section-head">
-      <p class="kicker"><span class="glyph st-attention-c" aria-hidden="true">!</span> VERIFY · ISOLATION</p>
+      <p class="kicker">WORKTREE ISOLATION</p>
       <div>
-        <h2 id="isolation-title">Parallel work without shared-file roulette.</h2>
-        <p>Isolation starts before an agent writes.</p>
+        <h2 id="isolation-title">Separate worktrees prevent overwritten files.</h2>
+        <p>Each agent starts in its own working copy.</p>
       </div>
     </div>
     <div class="arch-isolation-grid">
@@ -158,10 +158,10 @@
 
   <section class="arch-section arch-surface phase-section" data-phase="route" aria-labelledby="surface-title">
     <div class="arch-section-head">
-      <p class="kicker"><span class="glyph st-thinking-c" aria-hidden="true">◐</span> ROUTE · PROGRAMMABLE SURFACE</p>
+      <p class="kicker">API AND EXTENSIONS</p>
       <div>
-        <h2 id="surface-title">The UI is one client.</h2>
-        <p>The same local control plane is available to scripts, agents, hooks, and extensions.</p>
+        <h2 id="surface-title">The backend is available outside the UI.</h2>
+        <p>Scripts, agents, hooks, and extensions can use the same local control plane.</p>
       </div>
     </div>
     <div class="stats-row arch-stats" aria-label="Programmable platform totals">
@@ -172,7 +172,7 @@
     <p class="source-line">Alpha snapshot · counted in github.com/vibe2vibe/ive</p>
     <dl class="arch-surface-defs">
       <div><dt>API</dt><dd>Drive sessions and read local state from code.</dd></div>
-      <div><dt>MCP tools</dt><dd>Let Commander spawn, assign, inspect, and route workers.</dd></div>
+      <div><dt>MCP tools</dt><dd>Start, assign, inspect, and route sessions from an MCP client.</dd></div>
       <div><dt>Events</dt><dd>Subscribe to changes or forward them by webhook.</dd></div>
       <div><dt>Plugins</dt><dd>Install extensions from registries and attach MCP servers per session.</dd></div>
     </dl>
@@ -180,10 +180,10 @@
 
   <section class="arch-section arch-access phase-section" data-phase="verify" aria-labelledby="access-title">
     <div class="arch-section-head">
-      <p class="kicker"><span class="glyph st-attention-c" aria-hidden="true">!</span> VERIFY · ACCESS CONTROL</p>
+      <p class="kicker">ACCESS CONTROL</p>
       <div>
-        <h2 id="access-title">Permission is mode plus enforcement.</h2>
-        <p>Three modes. Three independent checks.</p>
+        <h2 id="access-title">Access is enforced in three places.</h2>
+        <p>The active mode is checked by routes, CLI flags, and tool hooks.</p>
       </div>
     </div>
     <div class="arch-access-grid">
@@ -208,10 +208,10 @@
 
   <section class="arch-section arch-security surface-secondary phase-section" data-phase="verify" aria-labelledby="security-title">
     <div class="arch-section-head">
-      <p class="kicker"><span class="glyph st-attention-c" aria-hidden="true">!</span> VERIFY · SECURITY</p>
+      <p class="kicker">SECURITY</p>
       <div>
-        <h2 id="security-title">Controls sit in the execution path.</h2>
-        <p>They are observable parts of the system, not a promise around it.</p>
+        <h2 id="security-title">Checks run before and during execution.</h2>
+        <p>Package scans, account isolation, and audit records are part of the runtime.</p>
       </div>
     </div>
     <dl class="arch-security-ledger">
@@ -232,8 +232,8 @@
 
   <section class="arch-close phase-section" id="arch-proof" data-phase="proof" aria-labelledby="close-title">
     <div class="arch-close-inner">
-      <p class="kicker"><span class="glyph st-done-c" aria-hidden="true">✓</span> PROOF · RUN LOCALLY</p>
-      <h2 id="close-title">Clone it. Read it. Run it locally.</h2>
+      <p class="kicker">RUN LOCALLY</p>
+      <h2 id="close-title">Clone the repository and start IVE.</h2>
       <div class="install" role="group" aria-label="Installation command">
         <div class="install-lines mono">
           <p><span class="ps1" aria-hidden="true">$</span> git clone https://github.com/vibe2vibe/ive</p>

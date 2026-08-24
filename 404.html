@@ -89,25 +89,15 @@
   }
   .theme-toggle:hover { border-color: var(--line-strong); background: var(--bg-raised); }
   .box { max-width: min(560px, var(--maxw)); width: 100%; }
-  .term {
-    background: var(--bg-inset); border: 1px solid var(--line); border-radius: 8px;
+  .error-code {
     font-family: 'IBM Plex Mono', ui-monospace, monospace;
-    font-size: 13.5px; line-height: 2; padding: 18px 20px;
-    color: var(--text-dim);
+    color: var(--text-faint); font-size: 13px; letter-spacing: 0.08em;
   }
-  .term .head {
-    display: flex; justify-content: space-between;
-    color: var(--text-faint); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
-    border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: 12px;
-  }
-  .ps1 { color: var(--text-faint); }
-  .fail { color: var(--attention-ink); }
-  .idle { color: var(--waiting-ink); }
   h1 {
     font-family: 'Archivo', system-ui, sans-serif;
     font-stretch: 125%;
     font-weight: 620; font-size: clamp(32px, 3.6vw, 46px);
-    letter-spacing: -0.04em; line-height: 1.04; text-wrap: balance; margin: 28px 0 10px;
+    letter-spacing: -0.04em; line-height: 1.04; text-wrap: balance; margin: 18px 0 10px;
   }
   p.sub { color: var(--text-dim); font-size: 16px; }
   a.back {
@@ -119,25 +109,16 @@
   a.back:hover { background: var(--invert-raised); }
   a.gh { color: var(--text-dim); font-size: 14px; margin-left: 18px; }
   :focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 2px; }
-  .sr-only {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
-  }
 </style>
 </head>
 <body>
-  <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme" data-theme-toggle>○ LIGHT</button>
+  <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme" data-theme-toggle>Light</button>
   <main class="box">
-    <div class="term" role="img" aria-label="Terminal output: no route matched this page, zero sessions dispatched">
-      <div class="head"><span>ive · router</span><span class="fail"><span aria-hidden="true">!</span><span class="sr-only">status: </span> attention</span></div>
-      <p><span class="ps1">$</span> ive resolve <span id="path">/this-page</span></p>
-      <p class="fail"><span aria-hidden="true">!</span><span class="sr-only">attention: </span> no route matched · 404</p>
-      <p class="idle"><span aria-hidden="true">○</span><span class="sr-only">queued: </span> sessions dispatched: 0 · nothing to orchestrate here</p>
-    </div>
-    <h1>This page doesn&rsquo;t exist.</h1>
-    <p class="sub">Even Commander can&rsquo;t delegate a task to a URL that was never written.</p>
-    <a class="back" href="/">Back to Mission Control</a>
-    <a class="gh" href="https://github.com/vibe2vibe/ive">GitHub →</a>
+    <p class="error-code">404</p>
+    <h1>Page not found.</h1>
+    <p class="sub">The address may be incorrect, or the page may have moved.</p>
+    <a class="back" href="index.html">Back to IVE</a>
+    <a class="gh" href="https://github.com/vibe2vibe/ive" target="_blank" rel="noopener">GitHub →</a>
   </main>
   <script>
     (function () {
@@ -155,7 +136,7 @@
       function applyTheme(theme, persist) {
         var isDark = theme === 'dark';
         document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-        themeToggle.textContent = isDark ? '● DARK' : '○ LIGHT';
+        themeToggle.textContent = isDark ? 'Dark' : 'Light';
         themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
         themeToggle.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
         themeMeta.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim());
@@ -169,10 +150,6 @@
         applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark', true);
       });
 
-      var el = document.getElementById('path');
-      var p = location.pathname || '/this-page';
-      if (p.length > 42) p = p.slice(0, 41) + '…';
-      el.textContent = p.replace(/[<>"']/g, '');
     })();
   </script>
 </body>
