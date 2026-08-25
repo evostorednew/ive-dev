@@ -55,7 +55,7 @@
   onScrollNav();
 
   /* ── reveal figures ──────────────────────────────────── */
-  var figures = document.querySelectorAll('.mc, .delegate, .ralph, .term-bleed, .models, .localbox, .memflow, .coord, .board, .pipe, .brief-card, .collab, .stats-row');
+  var figures = document.querySelectorAll('.mc, .delegate, .ralph, .term-bleed, .models, .localbox, .memflow, .coord, .board, .pipe, .brief-card, .collab, .stats-row, .run-demo, .final-console');
   if (!reduceMotion && 'IntersectionObserver' in window) {
     var revealIO = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
@@ -325,6 +325,120 @@
     if (ticketLive) ticketLive.hidden = bTick < 2;
   }, 2000);
 
+  /* ── closing run chooser: one goal branches into visible work ── */
+  var runDemo = document.querySelector('.run-demo');
+  var runChoiceList = document.querySelector('.run-choices');
+  var runChoices = Array.prototype.slice.call(document.querySelectorAll('[data-run-choice]'));
+  var runGoal = document.querySelector('[data-run-goal]');
+  var finalGoal = document.querySelector('[data-final-goal]');
+  var runTaskNames = document.querySelectorAll('[data-run-task-name]');
+  var runTasks = document.querySelectorAll('[data-run-task]');
+  var runTaskStatuses = document.querySelectorAll('[data-run-task-status]');
+  var runStatus = document.querySelector('[data-run-status]');
+  var runResult = document.querySelector('[data-run-result]');
+  var runProof = document.querySelector('[data-run-proof]');
+  var runTick = 4;
+  var RUN_STEP_SEQUENCE = [0, 1, 2, 3, 4, 4];
+  var RUNS = {
+    feature: {
+      goal: 'Build a secure passkey sign-in flow.',
+      tasks: ['sign-in API', 'account interface', 'regression checks', 'final review'],
+      result: 'One feature. Four focused tasks. One review.',
+      proof: 'Separate workspaces · checks before merge'
+    },
+    queue: {
+      goal: 'Work through the approved accessibility queue.',
+      tasks: ['navigation fixes', 'form labels', 'contrast checks', 'release review'],
+      result: 'Queued work keeps moving while decisions stay visible.',
+      proof: 'Progress and open decisions in one summary'
+    },
+    risk: {
+      goal: 'Upgrade the authentication package safely.',
+      tasks: ['dependency scan', 'isolated upgrade', 'compatibility checks', 'diff review'],
+      result: 'Risk stays separate until you approve the change.',
+      proof: 'Worktree isolation · dependency checks · you approve'
+    }
+  };
+
+  var runOrientationQuery = window.matchMedia('(min-width: 721px) and (max-width: 1080px)');
+  function syncRunOrientation() {
+    if (runChoiceList) runChoiceList.setAttribute('aria-orientation', runOrientationQuery.matches ? 'horizontal' : 'vertical');
+  }
+  syncRunOrientation();
+  runOrientationQuery.addEventListener('change', syncRunOrientation);
+
+  function setRunStep(step) {
+    if (!runDemo) return;
+    var isReady = step >= runTasks.length;
+    runDemo.classList.toggle('is-ready', isReady);
+    if (runStatus) {
+      runStatus.className = 'status ' + (isReady ? 'st-done' : 'st-running');
+      runStatus.innerHTML = isReady
+        ? '<span class="glyph" aria-hidden="true">✓</span> ready to review'
+        : '<span class="glyph" aria-hidden="true">●</span> working';
+    }
+    runTasks.forEach(function (task, index) {
+      var status = runTaskStatuses[index];
+      var isComplete = index < step || isReady;
+      var isActive = index === step && !isReady;
+      task.classList.toggle('is-complete', isComplete);
+      task.classList.toggle('is-active', isActive);
+      if (!status) return;
+      status.className = 'status ' + (isComplete ? 'st-done' : isActive ? 'st-running' : 'st-waiting');
+      status.innerHTML = isComplete
+        ? '<span class="glyph" aria-hidden="true">✓</span> complete'
+        : isActive
+          ? '<span class="glyph" aria-hidden="true">●</span> running'
+          : '<span class="glyph" aria-hidden="true">○</span> queued';
+    });
+  }
+
+  function selectRun(choice, moveFocus) {
+    if (!runDemo || !choice) return;
+    var key = choice.getAttribute('data-run-choice');
+    var data = RUNS[key];
+    if (!data) return;
+    runChoices.forEach(function (button) {
+      var selected = button === choice;
+      button.classList.toggle('is-selected', selected);
+      button.setAttribute('aria-selected', selected ? 'true' : 'false');
+      button.setAttribute('tabindex', selected ? '0' : '-1');
+    });
+    runDemo.setAttribute('aria-labelledby', choice.id);
+    if (runGoal) runGoal.textContent = data.goal;
+    if (finalGoal) finalGoal.textContent = data.goal;
+    runTaskNames.forEach(function (name, index) { name.textContent = data.tasks[index]; });
+    if (runResult) runResult.textContent = data.result;
+    if (runProof) runProof.textContent = data.proof;
+    runDemo.classList.remove('is-changing');
+    void runDemo.offsetWidth;
+    runDemo.classList.add('is-changing');
+    runTick = 0;
+    setRunStep(reduceMotion ? 4 : 0);
+    if (moveFocus) choice.focus();
+  }
+
+  runChoices.forEach(function (choice, index) {
+    choice.addEventListener('click', function () { selectRun(choice, false); });
+    choice.addEventListener('keydown', function (event) {
+      var next = null;
+      if (event.key === 'ArrowDown' || event.key === 'ArrowRight') next = (index + 1) % runChoices.length;
+      if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') next = (index - 1 + runChoices.length) % runChoices.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = runChoices.length - 1;
+      if (next === null) return;
+      event.preventDefault();
+      selectRun(runChoices[next], true);
+    });
+  });
+  if (runDemo) {
+    setRunStep(4);
+    ambient(runDemo, function () {
+      runTick = (runTick + 1) % RUN_STEP_SEQUENCE.length;
+      setRunStep(RUN_STEP_SEQUENCE[runTick]);
+    }, 1450);
+  }
+
   motionQuery.addEventListener('change', function (event) {
     if (!event.matches) return;
     reduceMotion = true;
@@ -337,6 +451,7 @@
     }
     setStaticStory();
     if (ticketLive) ticketLive.hidden = false;
+    setRunStep(4);
   });
 
   /* ── copy install command ────────────────────────────── */

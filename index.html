@@ -151,17 +151,48 @@
 
 <!-- 08 · REAL WORK -->
 <section class="chapter use-cases phase-section" data-phase="proof" aria-labelledby="use-cases-title">
-  <div class="chapter-head"><p class="kicker">COMMON USE CASES</p><h2 id="use-cases-title">Three ways to use IVE.</h2></div>
-  <div class="use-case-list">
-    <article class="use-case"><p class="use-case-phase mono">FEATURE WORK</p><h3>Build a feature in parallel.</h3><p>IVE assigns backend, interface, and test work to separate sessions. You receive the combined changes for review.</p><p class="use-case-proof mono">Result: one review</p></article>
-    <article class="use-case"><p class="use-case-phase mono">QUEUED WORK</p><h3>Let queued tasks continue.</h3><p>When you return, IVE shows what changed, which checks passed, and which decisions remain open.</p><p class="use-case-proof mono">Result: a short summary</p></article>
-    <article class="use-case"><p class="use-case-phase mono">RISKY CHANGES</p><h3>Keep changes separate until review.</h3><p>Each task uses its own worktree. Dependency scans and checks run before you decide whether to merge.</p><p class="use-case-proof mono">Control: you approve</p></article>
+  <div class="use-cases-head">
+    <div class="chapter-head"><p class="kicker">CHOOSE A RUN</p><h2 id="use-cases-title">What would you hand to IVE?</h2></div>
+    <p class="use-cases-lede">Pick a starting point. The example run shows how one goal becomes focused work and returns as one result to review.</p>
+  </div>
+  <div class="run-picker">
+    <div class="run-choices" role="tablist" aria-label="Example IVE runs" aria-orientation="vertical">
+      <button class="run-choice is-selected" id="run-choice-feature" type="button" role="tab" aria-selected="true" aria-controls="run-panel" tabindex="0" data-run-choice="feature">
+        <span class="run-choice-label mono">FEATURE WORK</span><strong>Build a feature in parallel.</strong><span>Backend, interface, checks, and review move together.</span>
+      </button>
+      <button class="run-choice" id="run-choice-queue" type="button" role="tab" aria-selected="false" aria-controls="run-panel" tabindex="-1" data-run-choice="queue">
+        <span class="run-choice-label mono">QUEUED WORK</span><strong>Let approved tasks continue.</strong><span>Return to a short summary and the decisions still open.</span>
+      </button>
+      <button class="run-choice" id="run-choice-risk" type="button" role="tab" aria-selected="false" aria-controls="run-panel" tabindex="-1" data-run-choice="risk">
+        <span class="run-choice-label mono">RISKY CHANGES</span><strong>Keep risk separate until review.</strong><span>Isolate the work, run checks, then choose what gets merged.</span>
+      </button>
+    </div>
+    <figure class="run-demo surface-secondary is-ready" id="run-panel" role="tabpanel" aria-labelledby="run-choice-feature">
+      <div class="run-demo-head"><span class="mono">EXAMPLE RUN</span><span class="status st-done" data-run-status><span class="glyph" aria-hidden="true">✓</span> ready to review</span></div>
+      <div class="run-goal"><span class="mono">your goal</span><p data-run-goal>Build a secure passkey sign-in flow.</p></div>
+      <div class="run-branch" aria-label="Four focused tasks created from the goal">
+        <div class="run-task" data-run-task><span class="run-task-line" aria-hidden="true"></span><span class="run-task-id mono">s-01</span><strong data-run-task-name>sign-in API</strong><span class="status st-done" data-run-task-status><span class="glyph" aria-hidden="true">✓</span> complete</span></div>
+        <div class="run-task" data-run-task><span class="run-task-line" aria-hidden="true"></span><span class="run-task-id mono">s-02</span><strong data-run-task-name>account interface</strong><span class="status st-done" data-run-task-status><span class="glyph" aria-hidden="true">✓</span> complete</span></div>
+        <div class="run-task" data-run-task><span class="run-task-line" aria-hidden="true"></span><span class="run-task-id mono">s-03</span><strong data-run-task-name>regression checks</strong><span class="status st-done" data-run-task-status><span class="glyph" aria-hidden="true">✓</span> complete</span></div>
+        <div class="run-task" data-run-task><span class="run-task-line" aria-hidden="true"></span><span class="run-task-id mono">s-04</span><strong data-run-task-name>final review</strong><span class="status st-done" data-run-task-status><span class="glyph" aria-hidden="true">✓</span> complete</span></div>
+      </div>
+      <div class="run-result" aria-live="polite"><span class="run-result-mark glyph" aria-hidden="true">✓</span><div><strong data-run-result>One feature. Four focused tasks. One review.</strong><span class="mono" data-run-proof>Separate workspaces · checks before merge</span></div></div>
+      <figcaption class="fig-note">Choose a run to change the goal and follow its task plan.</figcaption>
+    </figure>
   </div>
 </section>
 
 <!-- 09 · FINAL CTA -->
 <section class="final phase-section" id="get-ive" data-phase="proof" aria-labelledby="final-title">
-  <div class="final-inner"><p class="kicker">INSTALL</p><h2 class="final-title" id="final-title">Clone the repository<br>and start IVE.</h2><div class="install" role="group" aria-label="Installation command"><div class="install-lines mono"><p><span class="ps1" aria-hidden="true">$</span> git clone https://github.com/vibe2vibe/ive</p><p><span class="ps1" aria-hidden="true">$</span> cd ive &amp;&amp; ./start.sh</p></div><button class="copy-btn" type="button" data-copy="git clone https://github.com/vibe2vibe/ive &amp;&amp; cd ive &amp;&amp; ./start.sh">Copy</button></div><a class="btn btn-primary btn-big" href="https://github.com/vibe2vibe/ive" target="_blank" rel="noopener">View IVE on GitHub</a></div>
+  <div class="final-inner">
+    <div class="final-copy"><p class="kicker">START LOCAL</p><h2 class="final-title" id="final-title">Start with<br>one goal.</h2><p class="final-lede">Clone the open-source alpha, start IVE on your machine, and keep the whole run in view.</p><a class="btn btn-primary btn-big" href="https://github.com/vibe2vibe/ive" target="_blank" rel="noopener">View IVE on GitHub</a></div>
+    <div class="final-console">
+      <div class="final-console-head"><span class="mono">LOCAL SETUP</span><span class="status st-waiting"><span class="glyph" aria-hidden="true">○</span> ready</span></div>
+      <div class="install" role="group" aria-label="Installation command"><div class="install-lines mono"><p><span class="ps1" aria-hidden="true">$</span> git clone https://github.com/vibe2vibe/ive</p><p><span class="ps1" aria-hidden="true">$</span> cd ive &amp;&amp; ./start.sh</p></div><button class="copy-btn" type="button" data-copy="git clone https://github.com/vibe2vibe/ive &amp;&amp; cd ive &amp;&amp; ./start.sh">Copy</button></div>
+      <div class="final-first-goal"><span class="mono">YOUR FIRST GOAL</span><p><span class="ps1" aria-hidden="true">›</span> <span data-final-goal>Build a secure passkey sign-in flow.</span></p></div>
+      <div class="final-meta mono"><span>runs locally</span><span>Apache-2.0</span><span>alpha</span></div>
+    </div>
+  </div>
 </section>
 
 </main>

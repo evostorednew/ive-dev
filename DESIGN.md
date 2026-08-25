@@ -180,8 +180,8 @@ The homepage contains exactly these blocks, in order:
 5. Four user outcomes
 6. Human review and decision
 7. Open-source and local trust
-8. Three concrete use cases
-9. Final CTA
+8. Three concrete use cases in an interactive run chooser
+9. Final local setup CTA, carrying the chosen example goal forward
 
 Architecture, implementation totals, and the deeper security surface belong on
 the dedicated Architecture page or in the repository documentation.
@@ -203,9 +203,12 @@ Grammar: **Branch → Execute → Verify → Proof.**
   no more than 2.2 degrees to a fine pointer.
 - “Run at a glance” advances with the example state and always remains readable
   without motion.
+- Near the end, the run chooser lets the reader switch between three truthful
+  use cases. Its four task rows advance only while the instrument is visible;
+  the selected example goal carries into the local setup panel.
 - Ambient changes are sparse and product-relevant.
 - `prefers-reduced-motion` removes ambient and scroll animation, expands the run
-  to its final state.
+  to its final state, and leaves the chooser in its completed review state.
 - With JavaScript disabled all content and the final run state remain readable.
 
 ## Voice
