@@ -167,6 +167,13 @@
         <span class="run-choice-label mono">RISKY CHANGES</span><strong>Keep risk separate until review.</strong><span>Isolate the work, run checks, then choose what gets merged.</span>
       </button>
     </div>
+    <noscript>
+      <div class="nojs-run-list" aria-label="Three example IVE runs">
+        <article><span class="mono">FEATURE WORK</span><strong>Build a feature in parallel.</strong><p>IVE separates sign-in API, account interface, regression checks, and final review before returning one result.</p></article>
+        <article><span class="mono">QUEUED WORK</span><strong>Let approved tasks continue.</strong><p>IVE works through navigation fixes, form labels, contrast checks, and release review while open decisions remain visible.</p></article>
+        <article><span class="mono">RISKY CHANGES</span><strong>Keep risk separate until review.</strong><p>IVE isolates the upgrade, scans dependencies, runs compatibility checks, and leaves the merge decision with you.</p></article>
+      </div>
+    </noscript>
     <figure class="run-demo surface-secondary is-ready" id="run-panel" role="tabpanel" aria-labelledby="run-choice-feature">
       <div class="run-demo-head"><span class="mono">EXAMPLE RUN</span><span class="status st-done" data-run-status><span class="glyph" aria-hidden="true">✓</span> ready to review</span></div>
       <div class="run-goal"><span class="mono">your goal</span><p data-run-goal>Build a secure passkey sign-in flow.</p></div>
@@ -176,7 +183,8 @@
         <div class="run-task" data-run-task><span class="run-task-line" aria-hidden="true"></span><span class="run-task-id mono">s-03</span><strong data-run-task-name>regression checks</strong><span class="status st-done" data-run-task-status><span class="glyph" aria-hidden="true">✓</span> complete</span></div>
         <div class="run-task" data-run-task><span class="run-task-line" aria-hidden="true"></span><span class="run-task-id mono">s-04</span><strong data-run-task-name>final review</strong><span class="status st-done" data-run-task-status><span class="glyph" aria-hidden="true">✓</span> complete</span></div>
       </div>
-      <div class="run-result" aria-live="polite"><span class="run-result-mark glyph" aria-hidden="true">✓</span><div><strong data-run-result>One feature. Four focused tasks. One review.</strong><span class="mono" data-run-proof>Separate workspaces · checks before merge</span></div></div>
+      <div class="run-result"><span class="run-result-mark glyph" aria-hidden="true">✓</span><div><strong data-run-result>One feature. Four focused tasks. One review.</strong><span class="mono" data-run-proof>Separate workspaces · checks before merge</span></div></div>
+      <p class="sr-only" data-run-a11y-status aria-live="polite" aria-atomic="true"></p>
       <figcaption class="fig-note">Choose a run to change the goal and follow its task plan.</figcaption>
     </figure>
   </div>

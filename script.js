@@ -337,6 +337,8 @@
   var runStatus = document.querySelector('[data-run-status]');
   var runResult = document.querySelector('[data-run-result]');
   var runProof = document.querySelector('[data-run-proof]');
+  var runA11yStatus = document.querySelector('[data-run-a11y-status]');
+  var runShouldAnnounceReady = false;
   var runTick = 4;
   var RUN_STEP_SEQUENCE = [0, 1, 2, 3, 4, 4];
   var RUNS = {
@@ -391,6 +393,10 @@
           ? '<span class="glyph" aria-hidden="true">●</span> running'
           : '<span class="glyph" aria-hidden="true">○</span> queued';
     });
+    if (isReady && runShouldAnnounceReady && runA11yStatus) {
+      runA11yStatus.textContent = 'Ready to review. ' + (runResult ? runResult.textContent : 'The example run is complete.');
+      runShouldAnnounceReady = false;
+    }
   }
 
   function selectRun(choice, moveFocus) {
@@ -410,6 +416,12 @@
     runTaskNames.forEach(function (name, index) { name.textContent = data.tasks[index]; });
     if (runResult) runResult.textContent = data.result;
     if (runProof) runProof.textContent = data.proof;
+    if (runA11yStatus) {
+      runA11yStatus.textContent = reduceMotion
+        ? 'Example selected: ' + data.goal + ' The completed run is ready to review.'
+        : 'Example selected: ' + data.goal + ' Four focused tasks started.';
+    }
+    runShouldAnnounceReady = !reduceMotion;
     runDemo.classList.remove('is-changing');
     void runDemo.offsetWidth;
     runDemo.classList.add('is-changing');

@@ -2249,6 +2249,13 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
   flex-direction: column;
   border-bottom: 1px solid var(--line);
 }
+.no-js .run-choices { display: none; }
+.nojs-run-list { border-bottom: 1px solid var(--line); }
+.nojs-run-list article { padding: 22px 0; border-top: 1px solid var(--line); }
+.nojs-run-list article:first-child { border-top: 0; }
+.nojs-run-list span { display: block; color: var(--text-faint); font-size: 10.5px; letter-spacing: 0.08em; }
+.nojs-run-list strong { display: block; margin-top: 7px; font-family: var(--display); font-size: 20px; line-height: 1.16; }
+.nojs-run-list p { margin-top: 8px; color: var(--text-dim); font-size: 14.5px; }
 .run-choice {
   position: relative;
   width: 100%;
@@ -2614,6 +2621,9 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .run-choice::before { transition: none; }
+  .run-choice:hover,
+  .run-choice.is-selected { padding-left: 0; }
   .run-demo.is-changing .run-goal p,
   .run-demo.is-changing .run-task strong,
   .run-demo.is-changing .run-result div { animation: none; }
@@ -2621,4 +2631,14 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
   .final-console:hover,
   .final-console:focus-within { transform: none; }
   .final-console::before { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 1080px) {
+  .run-choice:hover,
+  .run-choice.is-selected { padding-left: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 720px) {
+  .run-choice:hover,
+  .run-choice.is-selected { padding-left: 16px; }
 }
