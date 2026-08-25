@@ -293,13 +293,24 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
   height: 64px; display: flex; align-items: center; gap: 28px;
 }
 .wordmark {
-  display: inline-flex; align-items: baseline; gap: 7px;
+  display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px;
   text-decoration: none; margin-right: auto;
 }
+.wordmark-main { display: inline-flex; align-items: baseline; gap: 7px; line-height: 0.9; }
 .wordmark-text {
   font-family: var(--display);
   font-weight: 800; font-size: 21px;
   letter-spacing: 0.01em;
+}
+.wordmark-by {
+  margin-left: 1px;
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.105em;
+  color: var(--text-faint);
+  white-space: nowrap;
 }
 .wordmark-dot {
   width: 8px; height: 8px; border-radius: 50%;
@@ -712,46 +723,6 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
 .chip-dim { border-style: dashed; color: var(--text-faint); }
 .hero-chip-row { gap: 6px; margin-top: 16px; }
 .hero-chip-row .chip { padding: 3px 8px; font-size: 10.5px; }
-
-.origin-mark {
-  width: fit-content;
-  min-height: 38px;
-  margin-top: 18px;
-  display: inline-grid;
-  grid-template-columns: auto auto auto;
-  align-items: stretch;
-  overflow: hidden;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--r-chip);
-  color: var(--text-dim);
-  text-decoration: none;
-  background: color-mix(in srgb, var(--bg-raised) 78%, transparent);
-  transition: border-color var(--fast), color var(--fast), transform var(--fast), box-shadow var(--fast);
-}
-.origin-mark:hover {
-  color: var(--text);
-  border-color: var(--route);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--route) 10%, transparent);
-}
-.origin-eu,
-.origin-from,
-.origin-arrow {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.055em;
-}
-.origin-eu {
-  padding: 0 11px;
-  color: var(--route-ink);
-  background: color-mix(in srgb, var(--route) 9%, transparent);
-  border-right: 1px solid var(--line);
-}
-.origin-from { padding: 0 10px 0 12px; text-transform: lowercase; }
-.origin-from strong { margin-left: 0.45em; color: var(--text); font-weight: 600; }
-.origin-arrow { padding: 0 10px 0 2px; color: var(--route-ink); font-size: 13px; }
 
 .subgrid {
   display: grid; grid-template-columns: repeat(3, 1fr);

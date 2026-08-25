@@ -18,10 +18,10 @@ The footer is strictly factual: IVE, its relationship to AI for Gov, relevant
 links, its EU-based origin, and its Apache 2.0 license. Decorative system-status
 language and compressed technical metadata do not appear there.
 
-IVE’s provenance is expressed as “EU-based · from AI for Gov,” with AI for Gov
-linked to `https://aiforgov.eu/`. “EU-backed” is not used because it can imply
-institutional EU funding or endorsement; no such claim is part of the verified
-product truth.
+The header carries a compact “IVE / by AIFOREU” maker lockup. The footer keeps
+the product relationship “from AI for Gov,” with AI for Gov linked to
+`https://aiforgov.eu/`. “EU-backed” is not used because it can imply institutional
+EU funding or endorsement; no such claim is part of the verified product truth.
 
 No character, avatar, robot, employee, personality, or workforce metaphor is
 used. Commander is a product control, not a persona.
