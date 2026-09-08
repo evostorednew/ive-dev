@@ -819,11 +819,12 @@
 
 })();
 
-/* IVE.DEV — exit: back into the letters.
-   The mark stands, the view dives into the V's left stroke, the page goes
-   black, the machine from the opening is there again with every agent on
-   the board at rest, then the terminal rises with your first goal. Typing a
-   goal and pressing enter plans it: four cards fly onto the board. */
+/* IVE.DEV — exit: the call to action comes into focus.
+   Three planes in depth: a wall of session tiles at the back, alive with a
+   wave of running → complete; the headline in the middle; the local setup
+   terminal in front. Scrolling racks the focus from plane to plane, like a
+   camera, until only the setup stands sharp. Typing a goal plans it into
+   four tasks and sends a wave through the wall. */
 (function () {
   'use strict';
 
@@ -836,42 +837,26 @@
   var live = root.classList.contains('mark-live') && !reduceMotion;
 
   var pin = exit.querySelector('[data-exit-pin]');
-  var line = exit.querySelector('[data-exit-line]');
-  var caps = Array.prototype.slice.call(exit.querySelectorAll('[data-exit-cap]'));
+  var wall = exit.querySelector('[data-exit-wall]');
   var anchor = exit.querySelector('[data-exit-anchor]');
-  var scene = exit.querySelector('[data-exit-scene]');
-  var cam = exit.querySelector('[data-exit-cam]');
-  var walls = {};
-  Array.prototype.forEach.call(exit.querySelectorAll('[data-exit-wall]'), function (w) { walls[w.getAttribute('data-exit-wall')] = w; });
-  var board = exit.querySelector('[data-exit-board]');
-  var boardCount = exit.querySelector('[data-exit-board-count]');
-  var swarmBox = exit.querySelector('[data-exit-swarm]');
-  var caption = exit.querySelector('[data-exit-caption]');
-  var capCount = exit.querySelector('[data-exit-count]');
   var term = exit.querySelector('[data-exit-term]');
   var termStatus = exit.querySelector('[data-exit-status]');
   var typeEls = Array.prototype.slice.call(exit.querySelectorAll('[data-exit-type]'));
   var form = exit.querySelector('[data-exit-form]');
   var input = exit.querySelector('[data-exit-input]');
   var result = exit.querySelector('[data-exit-result]');
+  var tasksBox = exit.querySelector('[data-exit-tasks]');
+  var taskRows = Array.prototype.slice.call(exit.querySelectorAll('[data-exit-task]'));
+  var taskNames = Array.prototype.slice.call(exit.querySelectorAll('[data-exit-task-name]'));
+  var taskStatuses = Array.prototype.slice.call(exit.querySelectorAll('[data-exit-task-status]'));
+  var count = exit.querySelector('[data-exit-count]');
   var finalGoal = exit.querySelector('[data-final-goal]');
   var columnQuery = window.matchMedia('(max-width: 720px)');
 
-  var GAP0 = 0.02;                     /* em between the letters, wordmark-tight */
-  /* story on the scroll axis */
-  var Z0 = 0.04, Z1 = 0.36;            /* dive into the V */
-  var R1 = 0.56;                       /* the room is there */
-  var P1 = 0.78;                       /* the terminal has risen; then hold */
-  var GRID = 120, TYPE_SPEED = 34;
-  var REST = [
-    ['s-01 · backend', 'sessions updated'], ['s-02 · frontend', 'redirect flow done'],
-    ['s-03 · tests', '48 checks passed'], ['s-04 · review', 'approved'],
-    ['s-05 · docs', '3 files changed'], ['s-06 · api', 'code_verifier route'],
-    ['s-07 · auth', 'src/auth/pkce.ts'], ['s-08 · build', 'bundled · 0 warnings'],
-    ['s-09 · lint', '12 files clean'], ['s-10 · migrate', 'schema v15 applied'],
-    ['s-11 · e2e', 'sign-in flow passed'], ['s-12 · release', 'changelog ready']
-  ];
-  var STATUS = { run: ['●', 'running'], att: ['!', 'retrying'], wait: ['◇', 'waiting'], done: ['✓', 'complete'] };
+  /* story on the scroll axis: focus racks wall → headline → terminal, then holds */
+  var H0 = 0.26, H1 = 0.48, T0 = 0.56, T1 = 0.80;
+  var TYPE_SPEED = 34, PERIOD = 8;
+  var STATUS = { run: ['●', 'running'], wait: ['○', 'queued'], done: ['✓', 'complete'] };
   var RULES = [
     [/sign[- ]?in|log[- ]?in|auth|passkey|session|oauth|sso|password/i, ['sign-in API', 'account interface', 'regression checks', 'final review']],
     [/upgrade|dependenc|package|version|migrat/i, ['dependency scan', 'isolated upgrade', 'compatibility checks', 'diff review']],
@@ -889,30 +874,15 @@
   var m = null;
   var raw = 0, lastRaw = -1;
   var clock = 0, lastTs = null, looping = false;
-  var hintReady = false, darkSet = false, roomOn = false;
+  var tiles = [];
   var typing = { started: false, done: false, t0: 0, full: typeEls.map(function (el) { return el.textContent; }), shown: typeEls.map(function () { return -1; }) };
   var plan = null;
-  var lastCap = '';
+  var lastCount = '';
+  var lastWallTs = -1e9;
+  var pointer = { x: 0, y: 0, t: -1e9, used: -1e9 };
 
   var ease = function (x) { x = x < 0 ? 0 : x > 1 ? 1 : x; return x * x * (3 - 2 * x); };
   var clamp = function (x) { return x < 0 ? 0 : x > 1 ? 1 : x; };
-  var lerp = function (a, b, t) { return a + (b - a) * t; };
-  var rnd = function (i, k) { var x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return x - Math.floor(x); };
-
-  function makeAgent(def, i, isPlan) {
-    var el = document.createElement('div');
-    el.className = 'scene-agent' + (isPlan ? ' is-plan' : '');
-    el.innerHTML = '<div class="sa-head"><span class="sa-id"></span><span class="sa-st"><span class="glyph"></span><span class="sa-word"></span></span></div><p class="sa-line"></p>';
-    el.querySelector('.sa-id').textContent = def[0];
-    el.querySelector('.sa-line').textContent = def[1];
-    swarmBox.appendChild(el);
-    return {
-      el: el, id: el.querySelector('.sa-id'), glyph: el.querySelector('.glyph'), word: el.querySelector('.sa-word'), line: el.querySelector('.sa-line'), st: '',
-      x0: (rnd(i + 20, 1) * 2 - 1), y0: (rnd(i + 20, 2) * 2 - 1), rot: 4 + 8 * rnd(i + 20, 3)
-    };
-  }
-  var rest = REST.map(function (def, i) { return makeAgent(def, i, false); });
-  var planAgents = [0, 1, 2, 3].map(function (i) { return makeAgent(['s-0' + (i + 1), ''], i + 12, true); });
 
   function setStatus(a, st) {
     if (a.st === st) return;
@@ -923,173 +893,144 @@
   }
   function setTermStatus(cls, glyph, word) {
     termStatus.className = 'exit-term-status mono' + (cls ? ' ' + cls : '');
-    termStatus.innerHTML = '<span class="glyph" aria-hidden="true"></span> ';
-    termStatus.querySelector('.glyph').textContent = glyph;
-    termStatus.appendChild(document.createTextNode(word));
+    termStatus.textContent = '';
+    var g = document.createElement('span'); g.className = 'glyph'; g.setAttribute('aria-hidden', 'true'); g.textContent = glyph;
+    termStatus.appendChild(g);
+    termStatus.appendChild(document.createTextNode(' ' + word));
   }
-  function setCaption(text) {
-    if (text === lastCap) return;
-    capCount.textContent = text;
-    lastCap = text;
+  function setRowStatus(i, st) {
+    var el = taskStatuses[i];
+    var cls = st === 'done' ? 'st-done' : st === 'run' ? 'st-running' : 'st-waiting';
+    if (el.getAttribute('data-st') === st) return;
+    el.setAttribute('data-st', st);
+    el.className = 'status ' + cls;
+    el.textContent = '';
+    var g = document.createElement('span'); g.className = 'glyph'; g.setAttribute('aria-hidden', 'true'); g.textContent = STATUS[st][0];
+    el.appendChild(g);
+    el.appendChild(document.createTextNode(' ' + STATUS[st][1]));
   }
-  function sizeBoard(cols, rows) {
-    board.style.width = (cols * m.cw + 28) + 'px';
-    board.style.height = (rows * m.ch + 56) + 'px';
+
+  /* the wall: a grid of session tiles, sized to the room, rebuilt only when the grid changes */
+  function buildWall() {
+    var column = columnQuery.matches;
+    var tw = column ? 78 : 148, th = column ? 26 : 34, gap = column ? 6 : 8;
+    var cols = Math.min(16, Math.ceil(m.w * 1.2 / (tw + gap)));
+    var rows = Math.min(26, Math.ceil(m.h * 1.0 / (th + gap)));
+    if (m.cols === cols && m.rows === rows && m.tw === tw) return;
+    m.cols = cols; m.rows = rows; m.tw = tw; m.th = th; m.gap = gap;
+    m.wallW = cols * (tw + gap) - gap; m.wallH = rows * (th + gap) - gap;
+    wall.style.setProperty('--wall-cols', cols);
+    wall.style.setProperty('--tile-w', tw + 'px');
+    wall.style.setProperty('--tile-h', th + 'px');
+    wall.style.setProperty('--tile-gap', gap + 'px');
+    wall.style.width = m.wallW + 'px';
+    wall.textContent = '';
+    tiles = [];
+    var dmax = Math.sqrt(m.wallW * m.wallW + m.wallH * m.wallH) / 2;
+    var frag = document.createDocumentFragment();
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) {
+        var i = r * cols + c;
+        var el = document.createElement('div');
+        el.className = 'exit-tile';
+        el.innerHTML = '<span class="et-id"></span><span class="et-st"><span class="glyph"></span><span class="et-word"></span></span>';
+        el.querySelector('.et-id').textContent = 's-' + ('00' + (i + 1)).slice(-3);
+        frag.appendChild(el);
+        var cx = (c - (cols - 1) / 2) * (tw + gap), cy = (r - (rows - 1) / 2) * (th + gap);
+        tiles.push({ el: el, glyph: el.querySelector('.glyph'), word: el.querySelector('.et-word'), st: '', cx: cx, cy: cy, d: Math.sqrt(cx * cx + cy * cy) / dmax, hot: -1 });
+      }
+    }
+    wall.appendChild(frag);
   }
 
   function measure() {
-    var column = columnQuery.matches;
-    var W, H;
+    m = m || {};
+    m.column = columnQuery.matches;
+    m.w = pin.clientWidth; m.h = pin.clientHeight;
+    m.top = exit.getBoundingClientRect().top + window.scrollY;
+    m.travel = Math.max(1, exit.offsetHeight - pin.offsetHeight);
     if (live) {
-      exit.classList.add('is-measuring');
-      var capEm = caps.map(function (c) { return c.getBoundingClientRect().width / 100; });
-      var lineEmH = line.getBoundingClientRect().height / 100;
-      exit.classList.remove('is-measuring');
-      var cs = getComputedStyle(pin);
-      var availW = pin.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-      availW = Math.min(availW, 1480) * 0.9;
-      var availH = pin.clientHeight * 0.56;
-      var a = capEm.reduce(function (s, v) { return s + v; }, 0) + 2 * GAP0;
-      W = pin.clientWidth; H = pin.clientHeight;
-      var size0 = Math.min(availW / a, availH / lineEmH);
-      var diag = Math.sqrt(W * W + H * H);
-      m = {
-        a: a, size0: size0,
-        originX: (capEm[0] + GAP0 + 0.31 * capEm[1]) / a,
-        zoom0: Math.max(10, 1.45 * diag / (0.19 * size0)),
-        top: exit.getBoundingClientRect().top + window.scrollY,
-        travel: Math.max(1, exit.offsetHeight - pin.offsetHeight)
-      };
       anchor.style.top = Math.round(m.travel * 0.86) + 'px';
-    } else {
-      W = scene.clientWidth; H = scene.clientHeight;
-      m = { top: 0, travel: 1 };
+      buildWall();
     }
-    m.column = column; m.w = W; m.h = H;
-    m.cw = column ? 162 : 214; m.ch = column ? 58 : 66;
-    m.boardScale = column ? 1 : 1.12;
-    var cols = column ? 2 : 4, rows = REST.length / cols;
-    m.restCols = cols; m.restRows = rows;
-    m.restSlots = rest.map(function (a, i) {
-      var col = i % cols, row = Math.floor(i / cols);
-      return { x: (col - (cols - 1) / 2) * m.cw, y: (row - (rows - 1) / 2) * m.ch };
-    });
-    var pc = column ? 2 : 4, pr = 4 / pc;
-    m.planCols = pc; m.planRows = pr;
-    m.planSlots = planAgents.map(function (a, i) {
-      var col = i % pc, row = Math.floor(i / pc);
-      return { x: (col - (pc - 1) / 2) * m.cw, y: (row - (pr - 1) / 2) * m.ch };
-    });
-    if (plan && plan.resized) sizeBoard(pc, pr); else sizeBoard(cols, rows);
     lastRaw = -1;
   }
 
-  /* ── the dive into the V ── */
-  function renderZoom() {
-    var z = clamp((raw - Z0) / (Z1 - Z0));
-    var pop = Math.pow(m.zoom0, ease(z));
-    var size = m.size0, shiftX = 0, tPop = 1;
-    if (pop > 1.0001) {
-      /* browsers stop drawing glyphs past a few thousand px: grow the type up to a cap, the rest is a transform about the same point */
-      var fontPop = Math.min(pop, 6000 / size);
-      tPop = pop / fontPop;
-      shiftX = -(m.originX - 0.5) * (m.a * size) * (fontPop - 1);
-      size *= fontPop;
+  /* pointer or burst position → wall coordinates (the wall's projected box is close enough) */
+  function toWall(clientX, clientY) {
+    var r = wall.getBoundingClientRect();
+    if (!r.width || !r.height) return null;
+    return { x: ((clientX - r.left) / r.width - 0.5) * m.wallW, y: ((clientY - r.top) / r.height - 0.5) * m.wallH };
+  }
+  function heat(x, y, radius, now, delayPerPx) {
+    for (var i = 0; i < tiles.length; i++) {
+      var t = tiles[i], dx = t.cx - x, dy = t.cy - y, dist = Math.sqrt(dx * dx + dy * dy);
+      if (radius && dist > radius) continue;
+      var at = now + (delayPerPx ? dist * delayPerPx : 0);
+      if (t.hot < 0 || now - t.hot > 600 || delayPerPx) t.hot = at;
     }
-    var st = exit.style;
-    st.setProperty('--exit-size', size.toFixed(2) + 'px');
-    st.setProperty('--exit-shift-x', shiftX.toFixed(1) + 'px');
-    st.setProperty('--exit-pop', tPop.toFixed(4));
-    st.setProperty('--exit-origin-x', (m.originX * 100).toFixed(2) + '%');
-    st.setProperty('--exit-dark', (ease((z - 0.3) / 0.45) * 100).toFixed(1) + '%');
-    st.setProperty('--exit-fade', (1 - ease(z / 0.2)).toFixed(3));
-    st.setProperty('--mark-hint', (!hintReady || raw > Z0) ? '0' : (1 - ease(raw / Z0)).toFixed(3));
-    line.style.visibility = z >= 1 ? 'hidden' : '';
-    roomOn = z >= 0.8;
-    scene.classList.toggle('is-on', roomOn);
-    scene.style.opacity = ease((z - 0.8) / 0.2).toFixed(3);
-    var wantDark = z >= 0.7;
-    if (wantDark !== darkSet) { root.classList.toggle('mark-dark', wantDark); darkSet = wantDark; }
   }
 
-  /* ── the room at rest, the terminal, the plan ── */
-  function renderRoom(now, dt) {
-    var r = live ? ease((raw - Z1) / (R1 - Z1)) : 1;
-    var p = live ? ease((raw - R1) / (P1 - R1)) : 0;
-    clock += dt;
-    scene.style.setProperty('--scene-lines', (0.42 * r).toFixed(3));
-    scene.style.setProperty('--scene-scan', r.toFixed(3));
-    scene.style.setProperty('--scene-vig', '1');
-
-    /* camera: the faintest breath, nothing more */
-    cam.style.transform = 'translate(' + (Math.sin(clock * 0.21) * 3).toFixed(1) + 'px, ' + (Math.cos(clock * 0.17) * 2).toFixed(1) + 'px)';
-    var dist = (clock * 8) % GRID;
-    walls.floor.style.transform = 'rotateX(-90deg) translateY(' + (-dist).toFixed(1) + 'px)';
-    walls.ceil.style.transform = 'rotateX(90deg) translateY(' + dist.toFixed(1) + 'px)';
-    walls.left.style.transform = 'rotateY(90deg) translateX(' + (-dist).toFixed(1) + 'px)';
-    walls.right.style.transform = 'rotateY(-90deg) translateX(' + dist.toFixed(1) + 'px)';
-
-    /* the board slides up as the terminal rises */
-    var bs = 1 - p * (m.column ? 0.28 : 0.10);
-    var by = -p * m.h * (m.column ? 0.21 : 0.20);
-    var u = plan ? (now - plan.t0) / 1000 : -1;
-    if (plan && !live) u = 10;
-    var restFade = plan ? ease(u / 0.4) : 0;
-    var animating = false;
-
-    for (var n = 0; n < rest.length; n++) {
-      var a = rest[n], slot = m.restSlots[n];
-      var settle = ease((r - n * 0.035) / 0.45);
-      var op = settle * (1 - restFade);
-      var sc = m.boardScale * bs * (0.94 + 0.06 * settle);
-      a.el.style.transform = 'translate(-50%, -50%) translate(' + (slot.x * bs).toFixed(1) + 'px, ' + (slot.y * bs + by + (1 - settle) * 16).toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
-      a.el.style.opacity = op.toFixed(3);
-      setStatus(a, 'done');
-    }
-    if (plan) {
-      if (u > 0.25 && !plan.resized) { plan.resized = true; sizeBoard(m.planCols, m.planRows); }
-      var RX = m.w * 0.55, RY = m.h * 0.5;
-      for (var i = 0; i < planAgents.length; i++) {
-        var pa = planAgents[i], ps = m.planSlots[i];
-        var start = 0.4 + i * 0.14;
-        var q = ease((u - start) / 0.85);
-        var fx = pa.x0 * RX * 0.16, fy = pa.y0 * RY * 0.16 + by;
-        var px = lerp(fx, ps.x * bs, q), py = lerp(fy, ps.y * bs + by, q);
-        var psc = lerp(0.38, m.boardScale * bs, q);
-        var pop = q <= 0 ? 0 : Math.min(1, q * 3);
-        var rot = (1 - q) * pa.rot, tiltY = (1 - q) * -pa.x0 * 16, tiltX = (1 - q) * pa.y0 * 10;
-        pa.el.style.transform = 'translate(-50%, -50%) translate(' + px.toFixed(1) + 'px, ' + py.toFixed(1) + 'px) perspective(700px) rotateY(' + tiltY.toFixed(1) + 'deg) rotateX(' + tiltX.toFixed(1) + 'deg) scale(' + psc.toFixed(3) + ') rotate(' + rot.toFixed(2) + 'deg)';
-        pa.el.style.opacity = pop.toFixed(3);
-        var done = q >= 1 && u > 1.9 + i * 0.32;
-        setStatus(pa, q >= 1 ? (done ? 'done' : 'run') : 'wait');
+  function tileState(t, now) {
+    if (t.hot > 0) {
+      var age = now - t.hot;
+      if (age >= 0) {
+        if (age < 600) return 'run';
+        if (age < 3800) return 'done';
+        t.hot = -1;
       }
-      if (u > 3.1 && !plan.done) {
-        plan.done = true;
-        result.textContent = '✓ One goal. Four focused tasks. One review.';
-        result.classList.add('is-done');
-        setTermStatus('st-done', '✓', 'ready to review');
-      }
-      setCaption(plan.done ? '4 complete · ready to review' : '4 sessions · running');
-      animating = u < 3.4;
-    } else {
-      setCaption('12 complete · 0 running');
     }
+    var u = (clock / PERIOD - t.d * 0.55) % 1;
+    if (u < 0) u += 1;
+    return u < 0.06 ? 'wait' : u < 0.28 ? 'run' : 'done';
+  }
 
-    var bo = ease((r - 0.15) / 0.6);
-    board.style.opacity = bo.toFixed(3);
-    board.style.transform = 'translate(-50%, -50%) translate(0px, ' + (by - 14 * bs).toFixed(1) + 'px) scale(' + bs.toFixed(3) + ')';
-    caption.style.opacity = (ease((r - 0.25) / 0.5) * (1 - ease(p / 0.5))).toFixed(3);
+  function renderWall(now) {
+    if (pointer.t > pointer.used && now - pointer.t < 200) {
+      pointer.used = now;
+      var p = toWall(pointer.x, pointer.y);
+      if (p) heat(p.x, p.y, m.column ? 70 : 120, now, 0);
+    }
+    var counts = { run: 0, wait: 0, done: 0 };
+    for (var i = 0; i < tiles.length; i++) {
+      var s = tileState(tiles[i], now);
+      setStatus(tiles[i], s);
+      counts[s]++;
+    }
+    var text = counts.done + ' complete · ' + counts.run + ' running · ' + counts.wait + ' queued';
+    if (text !== lastCount) { count.textContent = text; lastCount = text; }
+  }
 
-    /* the terminal rises, then types */
-    var ta = ease((p - 0.2) / 0.6);
+  /* focus racks through the three planes; the others soften, dim and drift */
+  function renderLayers() {
+    var f = raw < H0 ? 0 : raw < H1 ? ease((raw - H0) / (H1 - H0)) : raw < T0 ? 1 : 1 + ease((raw - T0) / (T1 - T0));
+    var BL = m.column ? 6 : 9;
     var st = exit.style;
-    st.setProperty('--term-alpha', ta.toFixed(3));
-    st.setProperty('--term-rise', ((1 - ta) * 48).toFixed(1) + 'px');
-    st.setProperty('--term-y', (m.h * (m.column ? 0.05 : 0.015)).toFixed(1) + 'px');
-    term.classList.toggle('is-live', p > 0.2);
-    if (p >= 0.55 && !typing.started) { typing.started = true; typing.t0 = now; }
-    if (typing.started && !typing.done) animating = updateTyping(now) || animating;
-    return animating;
+    var dz = f;
+    st.setProperty('--wall-blur', Math.min(m.column ? 8 : 14, BL * dz).toFixed(2) + 'px');
+    st.setProperty('--wall-o', (1 - 0.32 * Math.min(2, dz)).toFixed(3));
+    st.setProperty('--wall-s', (1 + 0.16 * raw).toFixed(4));
+    st.setProperty('--wall-y', (-0.12 * m.h * raw).toFixed(1) + 'px');
+    st.setProperty('--wall-tilt', (14 + 8 * raw).toFixed(2) + 'deg');
+
+    dz = Math.abs(1 - f);
+    var near = Math.min(1, dz);
+    st.setProperty('--head-blur', Math.min(12, BL * dz).toFixed(2) + 'px');
+    st.setProperty('--head-o', (0.3 + 0.7 * (1 - near)).toFixed(3));
+    var hs = f <= 1 ? 0.88 + 0.12 * (1 - dz) : 1 - (m.column ? 0.30 : 0.28) * dz;
+    var hy = f <= 1 ? 0.08 * m.h * dz : -0.27 * m.h * dz;
+    st.setProperty('--head-s', hs.toFixed(4));
+    st.setProperty('--head-y', hy.toFixed(1) + 'px');
+
+    dz = Math.abs(2 - f);
+    near = Math.min(1, dz);
+    st.setProperty('--term-blur', Math.min(12, BL * dz).toFixed(2) + 'px');
+    st.setProperty('--term-o', (f < 1 ? 0 : 1 - 0.65 * near).toFixed(3));
+    st.setProperty('--term-s', (0.92 + 0.08 * (1 - near)).toFixed(4));
+    st.setProperty('--term-y', (-(m.column ? 0.095 : 0.10) * m.h + 0.28 * m.h * near).toFixed(1) + 'px');
+    term.classList.toggle('is-live', dz < 0.35);
+    st.setProperty('--cap-o', (1 - ease(f / 0.6)).toFixed(3));
+    return dz;
   }
 
   function updateTyping(now) {
@@ -1099,21 +1040,14 @@
       var full = typing.full[i];
       var n = Math.max(0, Math.min(full.length, chars - off));
       if (typing.shown[i] !== n) { typeEls[i].textContent = full.slice(0, n); typing.shown[i] = n; }
-      var active = n < full.length && chars - off >= 0;
-      typeEls[i].classList.toggle('is-typing', active);
+      typeEls[i].classList.toggle('is-typing', n < full.length && chars - off >= 0);
       if (n < full.length) { allDone = false; break; }
       off += full.length + 10;
     }
-    if (allDone) {
-      typing.done = true;
-      typeEls.forEach(function (el) { el.classList.remove('is-typing'); });
-      exit.style.setProperty('--goal-alpha', '1');
-      term.classList.add('is-open');
-    }
-    return !allDone;
+    if (allDone) finishTyping();
   }
   function finishTyping() {
-    typeEls.forEach(function (el, i) { el.textContent = typing.full[i]; });
+    typeEls.forEach(function (el, i) { el.textContent = typing.full[i]; el.classList.remove('is-typing'); });
     typing.started = true; typing.done = true;
     exit.style.setProperty('--goal-alpha', '1');
     term.classList.add('is-open');
@@ -1128,17 +1062,35 @@
   function startPlan(text) {
     var goal = (text || '').trim() || input.placeholder;
     var tasks = planTasks(goal);
-    plan = { t0: performance.now(), goal: goal, resized: plan ? plan.resized : false, done: false };
-    planAgents.forEach(function (a, i) {
-      a.line.textContent = tasks[i];
-      a.st = ''; setStatus(a, 'wait');
-      a.el.style.opacity = '0';
-    });
-    boardCount.textContent = '4 sessions';
+    var now = performance.now();
+    plan = { t0: now, done: false };
+    taskNames.forEach(function (el, i) { el.textContent = tasks[i]; });
+    taskRows.forEach(function (row, i) { row.classList.remove('is-in'); setRowStatus(i, 'wait'); });
+    tasksBox.hidden = false;
     setTermStatus('st-run', '●', 'working');
     result.classList.remove('is-done');
     result.textContent = '● planning · four focused tasks started';
+    if (live && tiles.length) {
+      var r = term.getBoundingClientRect();
+      var p = toWall(r.left + r.width / 2, r.top + r.height * 0.3);
+      if (p) heat(p.x, p.y, 0, now + 300, 1.3);
+    }
     loop();
+  }
+  function renderPlan(now) {
+    var u = live ? (now - plan.t0) / 1000 : 10;
+    for (var i = 0; i < taskRows.length; i++) {
+      var start = 0.3 + i * 0.35;
+      taskRows[i].classList.toggle('is-in', u > start);
+      setRowStatus(i, u > 1.5 + i * 0.35 ? 'done' : u > start ? 'run' : 'wait');
+    }
+    if (u > 3.0 && !plan.done) {
+      plan.done = true;
+      result.textContent = '✓ One goal. Four focused tasks. One review.';
+      result.classList.add('is-done');
+      setTermStatus('st-done', '✓', 'ready to review');
+    }
+    return !plan.done;
   }
 
   function frame(ts) {
@@ -1146,15 +1098,23 @@
     if (!m) return;
     var dt = lastTs === null ? 0 : Math.min(0.05, (ts - lastTs) / 1000);
     lastTs = ts;
+    clock += dt;
     var animating = false;
     if (live) {
       raw = clamp((window.scrollY - m.top) / m.travel);
-      if (raw !== lastRaw) { renderZoom(); lastRaw = raw; }
-      if (!roomOn) term.classList.remove('is-live');
       var inView = window.scrollY + m.h > m.top && window.scrollY < m.top + m.travel + m.h;
-      if (roomOn && inView) animating = renderRoom(ts, dt) || true;
-    } else {
-      animating = renderRoom(ts, dt);
+      if (inView) {
+        var dzTerm = raw !== lastRaw ? renderLayers() : null;
+        if (raw !== lastRaw) lastRaw = raw;
+        if (ts - lastWallTs >= 80) { renderWall(ts); lastWallTs = ts; }
+        var termNear = dzTerm === null ? term.classList.contains('is-live') : dzTerm < 0.5;
+        if (termNear && !typing.started) { typing.started = true; typing.t0 = ts; }
+        if (typing.started && !typing.done) updateTyping(ts);
+        if (plan) renderPlan(ts);
+        animating = true;
+      }
+    } else if (plan) {
+      animating = renderPlan(ts);
     }
     if (animating) loop(); else lastTs = null;
   }
@@ -1181,20 +1141,171 @@
   window.addEventListener('orientationchange', onResize);
 
   if (live) {
+    exit.addEventListener('pointermove', function (e) { pointer.x = e.clientX; pointer.y = e.clientY; pointer.t = performance.now(); loop(); }, { passive: true });
     measure();
-    setTimeout(function () { loop(); }, 60);
-    setTimeout(function () { hintReady = true; lastRaw = -1; loop(); }, 900);
+    setTimeout(loop, 60);
     window.addEventListener('scroll', loop, { passive: true });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measure(); loop(); });
     window.addEventListener('load', function () { measure(); loop(); });
   } else {
     exit.classList.add('is-static');
-    scene.classList.add('is-on');
-    scene.style.opacity = '1';
     term.classList.add('is-live');
     finishTyping();
     measure();
-    loop();
-    window.addEventListener('load', function () { measure(); loop(); });
   }
+})();
+
+/* IVE.DEV — merge: every session comes back as one review.
+   One lane per session, drawn by scroll as they curve into a single trunk;
+   a packet travels each lane while it runs; the trunk ends in one review. */
+(function () {
+  'use strict';
+
+  var root = document.documentElement;
+  var sec = document.querySelector('[data-merge]');
+  if (!sec) return;
+
+  var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var reduceMotion = motionQuery.matches;
+  var live = root.classList.contains('mark-live') && !reduceMotion;
+
+  var pin = sec.querySelector('[data-merge-pin]');
+  var svg = sec.querySelector('[data-merge-svg]');
+  var ghostsG = sec.querySelector('[data-merge-ghosts]');
+  var lanesG = sec.querySelector('[data-merge-lanes]');
+  var packetsG = sec.querySelector('[data-merge-packets]');
+  var dotsG = sec.querySelector('[data-merge-dots]');
+  var labelsG = sec.querySelector('[data-merge-labels]');
+  var trunk = sec.querySelector('[data-merge-trunk]');
+  var node = sec.querySelector('[data-merge-node]');
+  var nodeLabel = sec.querySelector('[data-merge-node-label]');
+  var columnQuery = window.matchMedia('(max-width: 720px)');
+  var NS = 'http://www.w3.org/2000/svg';
+  var LANES = [
+    ['s-01', 'backend'], ['s-02', 'frontend'], ['s-03', 'tests'], ['s-04', 'review'],
+    ['s-05', 'docs'], ['s-06', 'api'], ['s-07', 'auth'], ['s-08', 'build'],
+    ['s-09', 'lint'], ['s-10', 'migrate'], ['s-11', 'e2e'], ['s-12', 'release']
+  ];
+  var TRUNK0 = 0.60, TRUNK1 = 0.82;
+
+  var m = null, raw = 0, lastRaw = -1;
+  var clock = 0, lastTs = null, looping = false;
+  var lanes = [], trunkLen = 0;
+
+  var ease = function (x) { x = x < 0 ? 0 : x > 1 ? 1 : x; return x * x * (3 - 2 * x); };
+  var clamp = function (x) { return x < 0 ? 0 : x > 1 ? 1 : x; };
+  var el = function (name, cls) { var e = document.createElementNS(NS, name); if (cls) e.setAttribute('class', cls); return e; };
+
+  function build() {
+    var column = columnQuery.matches;
+    var box = svg.getBoundingClientRect();
+    var W = Math.round(box.width), H = Math.round(box.height);
+    if (!W || !H) return;
+    if (m && m.W === W && m.H === H && m.column === columnQuery.matches) {
+      m.top = sec.getBoundingClientRect().top + window.scrollY;
+      m.travel = Math.max(1, sec.offsetHeight - pin.offsetHeight);
+      return;
+    }
+    var n = column ? 6 : LANES.length;
+    var pad = column ? 26 : 84;
+    var y0 = column ? 0.34 * H : 0.36 * H;
+    var ym = column ? 0.82 * H : 0.84 * H;
+    var cx = W / 2;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    ghostsG.textContent = ''; lanesG.textContent = ''; packetsG.textContent = ''; dotsG.textContent = ''; labelsG.textContent = '';
+    lanes = [];
+    for (var i = 0; i < n; i++) {
+      var x = pad + (W - 2 * pad) * (n === 1 ? 0.5 : i / (n - 1));
+      var d = 'M' + x.toFixed(1) + ' ' + y0.toFixed(1) + ' C' + x.toFixed(1) + ' ' + (y0 + (ym - y0) * 0.58).toFixed(1) + ', ' + cx.toFixed(1) + ' ' + (y0 + (ym - y0) * 0.42).toFixed(1) + ', ' + cx.toFixed(1) + ' ' + ym.toFixed(1);
+      var ghost = el('path', 'merge-ghost'); ghost.setAttribute('d', d); ghostsG.appendChild(ghost);
+      var path = el('path', 'merge-lane'); path.setAttribute('d', d); lanesG.appendChild(path);
+      var len = path.getTotalLength();
+      path.style.strokeDasharray = len.toFixed(1);
+      path.style.strokeDashoffset = len.toFixed(1);
+      var dot = el('circle', 'merge-dot'); dot.setAttribute('r', column ? 3.5 : 4.5); dotsG.appendChild(dot);
+      var packet = el('circle', 'merge-packet'); packet.setAttribute('r', column ? 2 : 2.5); packetsG.appendChild(packet);
+      var label = el('text', 'merge-label');
+      label.setAttribute('x', x.toFixed(1)); label.setAttribute('y', (y0 - 16).toFixed(1));
+      label.setAttribute('text-anchor', 'middle');
+      label.textContent = column ? LANES[i][0] : LANES[i][0] + ' · ' + LANES[i][1];
+      labelsG.appendChild(label);
+      lanes.push({ path: path, len: len, dot: dot, packet: packet, label: label, a0: 0.04 + (column ? 0.05 : 0.03) * i, seed: (i * 0.37) % 1 });
+    }
+    trunk.setAttribute('d', 'M' + cx.toFixed(1) + ' ' + ym.toFixed(1) + ' L' + cx.toFixed(1) + ' ' + (H + 40).toFixed(1));
+    trunkLen = trunk.getTotalLength();
+    trunk.style.strokeDasharray = trunkLen.toFixed(1);
+    trunk.style.strokeDashoffset = trunkLen.toFixed(1);
+    node.setAttribute('transform', 'translate(' + cx.toFixed(1) + ' ' + ym.toFixed(1) + ') scale(0)');
+    nodeLabel.setAttribute('x', (cx + (column ? 18 : 24)).toFixed(1));
+    nodeLabel.setAttribute('y', (ym + 4).toFixed(1));
+    nodeLabel.textContent = 'one review';
+    nodeLabel.style.opacity = '0';
+    m = { W: W, H: H, cx: cx, ym: ym, column: column, top: sec.getBoundingClientRect().top + window.scrollY, travel: Math.max(1, sec.offsetHeight - pin.offsetHeight) };
+    lastRaw = -1;
+  }
+
+  function render() {
+    for (var i = 0; i < lanes.length; i++) {
+      var L = lanes[i];
+      var p = live ? ease((raw - L.a0) / 0.42) : 1;
+      L.path.style.strokeDashoffset = (L.len * (1 - p)).toFixed(1);
+      var pt = L.path.getPointAtLength(L.len * p);
+      L.dot.setAttribute('cx', pt.x.toFixed(1)); L.dot.setAttribute('cy', pt.y.toFixed(1));
+      var done = p >= 1;
+      L.dot.classList.toggle('is-done', done);
+      L.label.classList.toggle('is-done', done);
+      if (p > 0.08 && !done) {
+        var q = ((clock * 0.16 + L.seed) % 1) * p;
+        var pp = L.path.getPointAtLength(L.len * q);
+        L.packet.setAttribute('cx', pp.x.toFixed(1)); L.packet.setAttribute('cy', pp.y.toFixed(1));
+        L.packet.style.opacity = '1';
+      } else {
+        L.packet.style.opacity = '0';
+      }
+    }
+    var tp = live ? ease((raw - TRUNK0) / (TRUNK1 - TRUNK0)) : 1;
+    trunk.style.strokeDashoffset = (trunkLen * (1 - tp)).toFixed(1);
+    var ns = live ? ease((raw - (TRUNK0 - 0.06)) / 0.08) : 1;
+    node.setAttribute('transform', 'translate(' + m.cx.toFixed(1) + ' ' + m.ym.toFixed(1) + ') scale(' + ns.toFixed(3) + ')');
+    nodeLabel.style.opacity = (live ? ease((raw - TRUNK0) / 0.12) : 1).toFixed(3);
+  }
+
+  function frame(ts) {
+    looping = false;
+    if (!m) return;
+    var dt = lastTs === null ? 0 : Math.min(0.05, (ts - lastTs) / 1000);
+    lastTs = ts;
+    clock += dt;
+    if (live) {
+      raw = clamp((window.scrollY - m.top) / m.travel);
+      var inView = window.scrollY + m.H > m.top && window.scrollY < m.top + m.travel + m.H;
+      if (!inView) { lastTs = null; return; }
+      render();
+      loop();
+    } else {
+      render();
+    }
+  }
+  function loop() {
+    if (looping) return;
+    looping = true;
+    window.requestAnimationFrame(frame);
+  }
+
+  var resizeTimer = null;
+  var onResize = function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { build(); loop(); }, 120);
+  };
+  window.addEventListener('resize', onResize);
+  window.addEventListener('orientationchange', onResize);
+
+  if (!live) sec.classList.add('is-static');
+  build();
+  loop();
+  if (live) window.addEventListener('scroll', loop, { passive: true });
+  window.addEventListener('load', function () { build(); loop(); });
+  /* the box can settle after the first build (fonts, late style); follow it */
+  if ('ResizeObserver' in window) new ResizeObserver(onResize).observe(svg);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { build(); loop(); });
 })();

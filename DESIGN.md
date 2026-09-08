@@ -180,13 +180,15 @@ The homepage contains exactly these blocks, in order:
 3. Why IVE
 4. How it works
 5. Four user outcomes
-6. Human review and decision
-7. Open-source and local trust
-8. Three concrete use cases in an interactive run chooser
-9. Exit: back into the letters. The mark stands once more, the view dives
-   into the V, the machine from the opening is there again at rest, and the
-   local setup terminal rises with the reader's first goal; the chosen
-   example goal carries forward as its placeholder
+6. Merge: every session comes back as one review, drawn by scroll
+7. Human review and decision
+8. Open-source and local trust
+9. Three concrete use cases in an interactive run chooser
+10. Exit: the call to action comes into focus. A wall of session tiles, the
+    headline and the local setup terminal sit on three depth planes; scroll
+    racks the focus through them until only the setup stands sharp, with the
+    reader's first goal; the chosen example goal carries forward as its
+    placeholder
 
 Architecture, implementation totals, and the deeper security surface belong on
 the dedicated Architecture page or in the repository documentation.
@@ -231,20 +233,26 @@ Grammar: **Branch → Execute → Verify → Proof.**
 - Near the end, the run chooser lets the reader switch between three truthful
   use cases. Its four task rows advance only while the instrument is visible;
   the selected example goal carries into the exit terminal as its placeholder.
-- The page closes the way it opened. Under “Start local” the mark “IVE”
-  stands on the light ground; scrolling dives into the V’s left stroke (the
-  same origin as the opening, in reverse) until the letter fills the view and
-  the ground is black. Out of the black, the corridor and the Mission Control
-  board return, but at rest: all twelve session cards complete, the camera
-  barely breathing, “Under control.” Then the board slides up and a terminal
-  rises, types the two setup lines, and unfolds “Your first goal” as a real
-  text field with the GitHub action. Enter plans the typed goal into four
-  focused tasks from a small word list, no model and no server: the resting
-  cards fade, the board narrows to one row, four cards fly in from the depth,
-  run, and complete under “One goal. Four focused tasks. One review.” Below
-  720px the resting cards drop their status word to fit two columns. Without
-  JavaScript or with reduced motion the exit is a plain dark block with the
-  terminal.
+- Merge, between the parallel work and its review: one lane per session
+  starts across the full width and curves into a single trunk. Scroll draws
+  the lanes in a stagger, a dot rides each drawing edge, a small packet
+  travels every running lane, and a lane and its label turn complete as it
+  arrives. The trunk then draws down out of the section in the complete
+  green, ending in one review. Faint ghost lines show the paths before they
+  are drawn. Below 720px there are six lanes and id-only labels.
+- The page closes in focus. Three planes in depth: a tilted wall of session
+  tiles at the back, alive with a slow wave of queued → running → complete
+  that also answers a pointer moving over it; the headline “Start with one
+  goal.” in the middle; the local setup terminal in front. Scrolling racks
+  the focus like a camera, wall → headline → terminal: whatever is off the
+  focal plane softens, dims and drifts, and the piece ends with only the
+  setup sharp. The terminal types its two lines, then unfolds “Your first
+  goal” as a real text field with the GitHub action; enter plans the typed
+  goal into four task rows from a small word list, no model and no server,
+  and sends a wave through the wall behind. The wall redraws at most twelve
+  times a second while it is soft. Without JavaScript or with reduced motion
+  the exit is headline and terminal in plain flow, and the merge is fully
+  drawn.
 - Ambient changes are sparse and product-relevant.
 - `prefers-reduced-motion` removes ambient and scroll animation, expands the run
   to its final state, and leaves the chooser in its completed review state.
