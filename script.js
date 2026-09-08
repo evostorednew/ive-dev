@@ -55,7 +55,7 @@
   onScrollNav();
 
   /* ── reveal figures ──────────────────────────────────── */
-  var figures = document.querySelectorAll('.mc, .delegate, .ralph, .term-bleed, .models, .localbox, .memflow, .coord, .board, .pipe, .brief-card, .collab, .stats-row, .run-demo, .final-console');
+  var figures = document.querySelectorAll('.mc, .delegate, .ralph, .term-bleed, .models, .localbox, .memflow, .coord, .board, .pipe, .brief-card, .collab, .stats-row, .run-demo');
   if (!reduceMotion && 'IntersectionObserver' in window) {
     var revealIO = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
@@ -814,4 +814,384 @@
     }
   })();
 
+})();
+
+/* IVE.DEV — exit: back into the letters.
+   The mark stands, the view dives into the V's left stroke, the page goes
+   black, the machine from the opening is there again with every agent on
+   the board at rest, then the terminal rises with your first goal. Typing a
+   goal and pressing enter plans it: four cards fly onto the board. */
+(function () {
+  'use strict';
+
+  var root = document.documentElement;
+  var exit = document.querySelector('[data-exit]');
+  if (!exit) return;
+
+  var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var reduceMotion = motionQuery.matches;
+  var live = root.classList.contains('mark-live') && !reduceMotion;
+
+  var pin = exit.querySelector('[data-exit-pin]');
+  var line = exit.querySelector('[data-exit-line]');
+  var caps = Array.prototype.slice.call(exit.querySelectorAll('[data-exit-cap]'));
+  var anchor = exit.querySelector('[data-exit-anchor]');
+  var scene = exit.querySelector('[data-exit-scene]');
+  var cam = exit.querySelector('[data-exit-cam]');
+  var walls = {};
+  Array.prototype.forEach.call(exit.querySelectorAll('[data-exit-wall]'), function (w) { walls[w.getAttribute('data-exit-wall')] = w; });
+  var board = exit.querySelector('[data-exit-board]');
+  var boardCount = exit.querySelector('[data-exit-board-count]');
+  var swarmBox = exit.querySelector('[data-exit-swarm]');
+  var caption = exit.querySelector('[data-exit-caption]');
+  var capCount = exit.querySelector('[data-exit-count]');
+  var term = exit.querySelector('[data-exit-term]');
+  var termStatus = exit.querySelector('[data-exit-status]');
+  var typeEls = Array.prototype.slice.call(exit.querySelectorAll('[data-exit-type]'));
+  var form = exit.querySelector('[data-exit-form]');
+  var input = exit.querySelector('[data-exit-input]');
+  var result = exit.querySelector('[data-exit-result]');
+  var finalGoal = exit.querySelector('[data-final-goal]');
+  var columnQuery = window.matchMedia('(max-width: 720px)');
+
+  var GAP0 = 0.02;                     /* em between the letters, wordmark-tight */
+  /* story on the scroll axis */
+  var Z0 = 0.04, Z1 = 0.36;            /* dive into the V */
+  var R1 = 0.56;                       /* the room is there */
+  var P1 = 0.78;                       /* the terminal has risen; then hold */
+  var GRID = 120, TYPE_SPEED = 34;
+  var REST = [
+    ['s-01 · backend', 'sessions updated'], ['s-02 · frontend', 'redirect flow done'],
+    ['s-03 · tests', '48 checks passed'], ['s-04 · review', 'approved'],
+    ['s-05 · docs', '3 files changed'], ['s-06 · api', 'code_verifier route'],
+    ['s-07 · auth', 'src/auth/pkce.ts'], ['s-08 · build', 'bundled · 0 warnings'],
+    ['s-09 · lint', '12 files clean'], ['s-10 · migrate', 'schema v15 applied'],
+    ['s-11 · e2e', 'sign-in flow passed'], ['s-12 · release', 'changelog ready']
+  ];
+  var STATUS = { run: ['●', 'running'], att: ['!', 'retrying'], wait: ['◇', 'waiting'], done: ['✓', 'complete'] };
+  var RULES = [
+    [/sign[- ]?in|log[- ]?in|auth|passkey|session|oauth|sso|password/i, ['sign-in API', 'account interface', 'regression checks', 'final review']],
+    [/upgrade|dependenc|package|version|migrat/i, ['dependency scan', 'isolated upgrade', 'compatibility checks', 'diff review']],
+    [/accessib|a11y|contrast|screen reader|keyboard/i, ['navigation fixes', 'form labels', 'contrast checks', 'release review']],
+    [/bug|fix|error|crash|broken|fail/i, ['reproduce the bug', 'isolated fix', 'regression test', 'final review']],
+    [/test|coverage|spec/i, ['test plan', 'unit tests', 'integration run', 'final review']],
+    [/docs?\b|readme|guide|manual/i, ['outline', 'draft pages', 'link checks', 'final review']],
+    [/perf|speed|fast|slow|cache|latency/i, ['profile the hot path', 'targeted changes', 'benchmark run', 'final review']],
+    [/api|endpoint|route|webhook|graphql/i, ['API routes', 'request validation', 'integration tests', 'final review']],
+    [/deploy|release|ci\b|pipeline|docker|kubernetes/i, ['pipeline config', 'build step', 'dry run', 'release review']],
+    [/database|schema|sql|table|model|data\b/i, ['schema change', 'data migration', 'integrity checks', 'final review']],
+    [/ui\b|page|screen|design|layout|landing|dashboard|form|dark mode|theme|component/i, ['layout', 'components', 'visual checks', 'final review']]
+  ];
+
+  var m = null;
+  var raw = 0, lastRaw = -1;
+  var clock = 0, lastTs = null, looping = false;
+  var hintReady = false, darkSet = false, roomOn = false;
+  var typing = { started: false, done: false, t0: 0, full: typeEls.map(function (el) { return el.textContent; }), shown: typeEls.map(function () { return -1; }) };
+  var plan = null;
+  var lastCap = '';
+
+  var ease = function (x) { x = x < 0 ? 0 : x > 1 ? 1 : x; return x * x * (3 - 2 * x); };
+  var clamp = function (x) { return x < 0 ? 0 : x > 1 ? 1 : x; };
+  var lerp = function (a, b, t) { return a + (b - a) * t; };
+  var rnd = function (i, k) { var x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return x - Math.floor(x); };
+
+  function makeAgent(def, i, isPlan) {
+    var el = document.createElement('div');
+    el.className = 'scene-agent' + (isPlan ? ' is-plan' : '');
+    el.innerHTML = '<div class="sa-head"><span class="sa-id"></span><span class="sa-st"><span class="glyph"></span><span class="sa-word"></span></span></div><p class="sa-line"></p>';
+    el.querySelector('.sa-id').textContent = def[0];
+    el.querySelector('.sa-line').textContent = def[1];
+    swarmBox.appendChild(el);
+    return {
+      el: el, id: el.querySelector('.sa-id'), glyph: el.querySelector('.glyph'), word: el.querySelector('.sa-word'), line: el.querySelector('.sa-line'), st: '',
+      x0: (rnd(i + 20, 1) * 2 - 1), y0: (rnd(i + 20, 2) * 2 - 1), rot: 4 + 8 * rnd(i + 20, 3)
+    };
+  }
+  var rest = REST.map(function (def, i) { return makeAgent(def, i, false); });
+  var planAgents = [0, 1, 2, 3].map(function (i) { return makeAgent(['s-0' + (i + 1), ''], i + 12, true); });
+
+  function setStatus(a, st) {
+    if (a.st === st) return;
+    a.st = st;
+    a.el.setAttribute('data-st', st);
+    a.glyph.textContent = STATUS[st][0];
+    a.word.textContent = STATUS[st][1];
+  }
+  function setTermStatus(cls, glyph, word) {
+    termStatus.className = 'exit-term-status mono' + (cls ? ' ' + cls : '');
+    termStatus.innerHTML = '<span class="glyph" aria-hidden="true"></span> ';
+    termStatus.querySelector('.glyph').textContent = glyph;
+    termStatus.appendChild(document.createTextNode(word));
+  }
+  function setCaption(text) {
+    if (text === lastCap) return;
+    capCount.textContent = text;
+    lastCap = text;
+  }
+  function sizeBoard(cols, rows) {
+    board.style.width = (cols * m.cw + 28) + 'px';
+    board.style.height = (rows * m.ch + 56) + 'px';
+  }
+
+  function measure() {
+    var column = columnQuery.matches;
+    var W, H;
+    if (live) {
+      exit.classList.add('is-measuring');
+      var capEm = caps.map(function (c) { return c.getBoundingClientRect().width / 100; });
+      var lineEmH = line.getBoundingClientRect().height / 100;
+      exit.classList.remove('is-measuring');
+      var cs = getComputedStyle(pin);
+      var availW = pin.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      availW = Math.min(availW, 1480) * 0.9;
+      var availH = pin.clientHeight * 0.56;
+      var a = capEm.reduce(function (s, v) { return s + v; }, 0) + 2 * GAP0;
+      W = pin.clientWidth; H = pin.clientHeight;
+      var size0 = Math.min(availW / a, availH / lineEmH);
+      var diag = Math.sqrt(W * W + H * H);
+      m = {
+        a: a, size0: size0,
+        originX: (capEm[0] + GAP0 + 0.31 * capEm[1]) / a,
+        zoom0: Math.max(10, 1.45 * diag / (0.19 * size0)),
+        top: exit.getBoundingClientRect().top + window.scrollY,
+        travel: Math.max(1, exit.offsetHeight - pin.offsetHeight)
+      };
+      anchor.style.top = Math.round(m.travel * 0.86) + 'px';
+    } else {
+      W = scene.clientWidth; H = scene.clientHeight;
+      m = { top: 0, travel: 1 };
+    }
+    m.column = column; m.w = W; m.h = H;
+    m.cw = column ? 162 : 214; m.ch = column ? 58 : 66;
+    m.boardScale = column ? 1 : 1.12;
+    var cols = column ? 2 : 4, rows = REST.length / cols;
+    m.restCols = cols; m.restRows = rows;
+    m.restSlots = rest.map(function (a, i) {
+      var col = i % cols, row = Math.floor(i / cols);
+      return { x: (col - (cols - 1) / 2) * m.cw, y: (row - (rows - 1) / 2) * m.ch };
+    });
+    var pc = column ? 2 : 4, pr = 4 / pc;
+    m.planCols = pc; m.planRows = pr;
+    m.planSlots = planAgents.map(function (a, i) {
+      var col = i % pc, row = Math.floor(i / pc);
+      return { x: (col - (pc - 1) / 2) * m.cw, y: (row - (pr - 1) / 2) * m.ch };
+    });
+    if (plan && plan.resized) sizeBoard(pc, pr); else sizeBoard(cols, rows);
+    lastRaw = -1;
+  }
+
+  /* ── the dive into the V ── */
+  function renderZoom() {
+    var z = clamp((raw - Z0) / (Z1 - Z0));
+    var pop = Math.pow(m.zoom0, ease(z));
+    var size = m.size0, shiftX = 0, tPop = 1;
+    if (pop > 1.0001) {
+      /* browsers stop drawing glyphs past a few thousand px: grow the type up to a cap, the rest is a transform about the same point */
+      var fontPop = Math.min(pop, 6000 / size);
+      tPop = pop / fontPop;
+      shiftX = -(m.originX - 0.5) * (m.a * size) * (fontPop - 1);
+      size *= fontPop;
+    }
+    var st = exit.style;
+    st.setProperty('--exit-size', size.toFixed(2) + 'px');
+    st.setProperty('--exit-shift-x', shiftX.toFixed(1) + 'px');
+    st.setProperty('--exit-pop', tPop.toFixed(4));
+    st.setProperty('--exit-origin-x', (m.originX * 100).toFixed(2) + '%');
+    st.setProperty('--exit-dark', (ease((z - 0.3) / 0.45) * 100).toFixed(1) + '%');
+    st.setProperty('--exit-fade', (1 - ease(z / 0.2)).toFixed(3));
+    st.setProperty('--mark-hint', (!hintReady || raw > Z0) ? '0' : (1 - ease(raw / Z0)).toFixed(3));
+    line.style.visibility = z >= 1 ? 'hidden' : '';
+    roomOn = z >= 0.8;
+    scene.classList.toggle('is-on', roomOn);
+    scene.style.opacity = ease((z - 0.8) / 0.2).toFixed(3);
+    var wantDark = z >= 0.7;
+    if (wantDark !== darkSet) { root.classList.toggle('mark-dark', wantDark); darkSet = wantDark; }
+  }
+
+  /* ── the room at rest, the terminal, the plan ── */
+  function renderRoom(now, dt) {
+    var r = live ? ease((raw - Z1) / (R1 - Z1)) : 1;
+    var p = live ? ease((raw - R1) / (P1 - R1)) : 0;
+    clock += dt;
+    scene.style.setProperty('--scene-lines', (0.42 * r).toFixed(3));
+    scene.style.setProperty('--scene-scan', r.toFixed(3));
+    scene.style.setProperty('--scene-vig', '1');
+
+    /* camera: the faintest breath, nothing more */
+    cam.style.transform = 'translate(' + (Math.sin(clock * 0.21) * 3).toFixed(1) + 'px, ' + (Math.cos(clock * 0.17) * 2).toFixed(1) + 'px)';
+    var dist = (clock * 8) % GRID;
+    walls.floor.style.transform = 'rotateX(-90deg) translateY(' + (-dist).toFixed(1) + 'px)';
+    walls.ceil.style.transform = 'rotateX(90deg) translateY(' + dist.toFixed(1) + 'px)';
+    walls.left.style.transform = 'rotateY(90deg) translateX(' + (-dist).toFixed(1) + 'px)';
+    walls.right.style.transform = 'rotateY(-90deg) translateX(' + dist.toFixed(1) + 'px)';
+
+    /* the board slides up as the terminal rises */
+    var bs = 1 - p * (m.column ? 0.28 : 0.10);
+    var by = -p * m.h * (m.column ? 0.21 : 0.20);
+    var u = plan ? (now - plan.t0) / 1000 : -1;
+    if (plan && !live) u = 10;
+    var restFade = plan ? ease(u / 0.4) : 0;
+    var animating = false;
+
+    for (var n = 0; n < rest.length; n++) {
+      var a = rest[n], slot = m.restSlots[n];
+      var settle = ease((r - n * 0.035) / 0.45);
+      var op = settle * (1 - restFade);
+      var sc = m.boardScale * bs * (0.94 + 0.06 * settle);
+      a.el.style.transform = 'translate(-50%, -50%) translate(' + (slot.x * bs).toFixed(1) + 'px, ' + (slot.y * bs + by + (1 - settle) * 16).toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
+      a.el.style.opacity = op.toFixed(3);
+      setStatus(a, 'done');
+    }
+    if (plan) {
+      if (u > 0.25 && !plan.resized) { plan.resized = true; sizeBoard(m.planCols, m.planRows); }
+      var RX = m.w * 0.55, RY = m.h * 0.5;
+      for (var i = 0; i < planAgents.length; i++) {
+        var pa = planAgents[i], ps = m.planSlots[i];
+        var start = 0.4 + i * 0.14;
+        var q = ease((u - start) / 0.85);
+        var fx = pa.x0 * RX * 0.16, fy = pa.y0 * RY * 0.16 + by;
+        var px = lerp(fx, ps.x * bs, q), py = lerp(fy, ps.y * bs + by, q);
+        var psc = lerp(0.38, m.boardScale * bs, q);
+        var pop = q <= 0 ? 0 : Math.min(1, q * 3);
+        var rot = (1 - q) * pa.rot, tiltY = (1 - q) * -pa.x0 * 16, tiltX = (1 - q) * pa.y0 * 10;
+        pa.el.style.transform = 'translate(-50%, -50%) translate(' + px.toFixed(1) + 'px, ' + py.toFixed(1) + 'px) perspective(700px) rotateY(' + tiltY.toFixed(1) + 'deg) rotateX(' + tiltX.toFixed(1) + 'deg) scale(' + psc.toFixed(3) + ') rotate(' + rot.toFixed(2) + 'deg)';
+        pa.el.style.opacity = pop.toFixed(3);
+        var done = q >= 1 && u > 1.9 + i * 0.32;
+        setStatus(pa, q >= 1 ? (done ? 'done' : 'run') : 'wait');
+      }
+      if (u > 3.1 && !plan.done) {
+        plan.done = true;
+        result.textContent = '✓ One goal. Four focused tasks. One review.';
+        result.classList.add('is-done');
+        setTermStatus('st-done', '✓', 'ready to review');
+      }
+      setCaption(plan.done ? '4 complete · ready to review' : '4 sessions · running');
+      animating = u < 3.4;
+    } else {
+      setCaption('12 complete · 0 running');
+    }
+
+    var bo = ease((r - 0.15) / 0.6);
+    board.style.opacity = bo.toFixed(3);
+    board.style.transform = 'translate(-50%, -50%) translate(0px, ' + (by - 14 * bs).toFixed(1) + 'px) scale(' + bs.toFixed(3) + ')';
+    caption.style.opacity = (ease((r - 0.25) / 0.5) * (1 - ease(p / 0.5))).toFixed(3);
+
+    /* the terminal rises, then types */
+    var ta = ease((p - 0.2) / 0.6);
+    var st = exit.style;
+    st.setProperty('--term-alpha', ta.toFixed(3));
+    st.setProperty('--term-rise', ((1 - ta) * 48).toFixed(1) + 'px');
+    st.setProperty('--term-y', (m.h * (m.column ? 0.05 : 0.015)).toFixed(1) + 'px');
+    term.classList.toggle('is-live', p > 0.2);
+    if (p >= 0.55 && !typing.started) { typing.started = true; typing.t0 = now; }
+    if (typing.started && !typing.done) animating = updateTyping(now) || animating;
+    return animating;
+  }
+
+  function updateTyping(now) {
+    var chars = Math.floor((now - typing.t0) / 1000 * TYPE_SPEED);
+    var off = 0, allDone = true;
+    for (var i = 0; i < typeEls.length; i++) {
+      var full = typing.full[i];
+      var n = Math.max(0, Math.min(full.length, chars - off));
+      if (typing.shown[i] !== n) { typeEls[i].textContent = full.slice(0, n); typing.shown[i] = n; }
+      var active = n < full.length && chars - off >= 0;
+      typeEls[i].classList.toggle('is-typing', active);
+      if (n < full.length) { allDone = false; break; }
+      off += full.length + 10;
+    }
+    if (allDone) {
+      typing.done = true;
+      typeEls.forEach(function (el) { el.classList.remove('is-typing'); });
+      exit.style.setProperty('--goal-alpha', '1');
+      term.classList.add('is-open');
+    }
+    return !allDone;
+  }
+  function finishTyping() {
+    typeEls.forEach(function (el, i) { el.textContent = typing.full[i]; });
+    typing.started = true; typing.done = true;
+    exit.style.setProperty('--goal-alpha', '1');
+    term.classList.add('is-open');
+  }
+
+  function planTasks(goal) {
+    for (var i = 0; i < RULES.length; i++) if (RULES[i][0].test(goal)) return RULES[i][1];
+    var topic = goal.replace(/^(please\s+)?(build|add|create|make|implement|write|set up|setup|refactor|improve|update|change|design|ship|fix|migrate|move)\s+(a|an|the|our|my)?\s*/i, '').replace(/[.!?]+$/, '').trim();
+    topic = topic.split(/\s+/).slice(0, 3).join(' ') || 'the goal';
+    return ['plan ' + topic, 'implement ' + topic, 'check ' + topic, 'review ' + topic];
+  }
+  function startPlan(text) {
+    var goal = (text || '').trim() || input.placeholder;
+    var tasks = planTasks(goal);
+    plan = { t0: performance.now(), goal: goal, resized: plan ? plan.resized : false, done: false };
+    planAgents.forEach(function (a, i) {
+      a.line.textContent = tasks[i];
+      a.st = ''; setStatus(a, 'wait');
+      a.el.style.opacity = '0';
+    });
+    boardCount.textContent = '4 sessions';
+    setTermStatus('st-run', '●', 'working');
+    result.classList.remove('is-done');
+    result.textContent = '● planning · four focused tasks started';
+    loop();
+  }
+
+  function frame(ts) {
+    looping = false;
+    if (!m) return;
+    var dt = lastTs === null ? 0 : Math.min(0.05, (ts - lastTs) / 1000);
+    lastTs = ts;
+    var animating = false;
+    if (live) {
+      raw = clamp((window.scrollY - m.top) / m.travel);
+      if (raw !== lastRaw) { renderZoom(); lastRaw = raw; }
+      if (!roomOn) term.classList.remove('is-live');
+      var inView = window.scrollY + m.h > m.top && window.scrollY < m.top + m.travel + m.h;
+      if (roomOn && inView) animating = renderRoom(ts, dt) || true;
+    } else {
+      animating = renderRoom(ts, dt);
+    }
+    if (animating) loop(); else lastTs = null;
+  }
+  function loop() {
+    if (looping) return;
+    looping = true;
+    window.requestAnimationFrame(frame);
+  }
+
+  /* ── wiring ── */
+  if (finalGoal) {
+    var syncGoal = function () { input.placeholder = finalGoal.textContent.trim() || input.placeholder; };
+    syncGoal();
+    if ('MutationObserver' in window) new MutationObserver(syncGoal).observe(finalGoal, { childList: true, characterData: true, subtree: true });
+  }
+  form.addEventListener('submit', function (e) { e.preventDefault(); startPlan(input.value); });
+
+  var resizeTimer = null;
+  var onResize = function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { measure(); loop(); }, 120);
+  };
+  window.addEventListener('resize', onResize);
+  window.addEventListener('orientationchange', onResize);
+
+  if (live) {
+    measure();
+    setTimeout(function () { loop(); }, 60);
+    setTimeout(function () { hintReady = true; lastRaw = -1; loop(); }, 900);
+    window.addEventListener('scroll', loop, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measure(); loop(); });
+    window.addEventListener('load', function () { measure(); loop(); });
+  } else {
+    exit.classList.add('is-static');
+    scene.classList.add('is-on');
+    scene.style.opacity = '1';
+    term.classList.add('is-live');
+    finishTyping();
+    measure();
+    loop();
+    window.addEventListener('load', function () { measure(); loop(); });
+  }
 })();

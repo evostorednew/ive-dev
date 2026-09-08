@@ -132,11 +132,11 @@ DARK
 Mission Control, the architecture security ledger, and the footer use the
 secondary ground. Human review remains the explicit opposite-ground moment.
 
-The high-intent hero and final CTAs use the execution accent:
+The high-intent hero CTA and the exit terminal's action use the execution accent:
 
 ```css
-.hero .btn-primary,
-.final .btn-primary { background: var(--running); color: var(--on-accent); }
+.hero .btn-primary { background: var(--running); color: var(--on-accent); }
+.exit .exit-cta { background: #1647FF; color: #FFFFFF; } /* fixed: it sits on the black room in both themes */
 ```
 
 Rules:
@@ -183,7 +183,10 @@ The homepage contains exactly these blocks, in order:
 6. Human review and decision
 7. Open-source and local trust
 8. Three concrete use cases in an interactive run chooser
-9. Final local setup CTA, carrying the chosen example goal forward
+9. Exit: back into the letters. The mark stands once more, the view dives
+   into the V, the machine from the opening is there again at rest, and the
+   local setup terminal rises with the reader's first goal; the chosen
+   example goal carries forward as its placeholder
 
 Architecture, implementation totals, and the deeper security surface belong on
 the dedicated Architecture page or in the repository documentation.
@@ -224,7 +227,21 @@ Grammar: **Branch → Execute → Verify → Proof.**
   without motion.
 - Near the end, the run chooser lets the reader switch between three truthful
   use cases. Its four task rows advance only while the instrument is visible;
-  the selected example goal carries into the local setup panel.
+  the selected example goal carries into the exit terminal as its placeholder.
+- The page closes the way it opened. Under “Start local” the mark “IVE”
+  stands on the light ground; scrolling dives into the V’s left stroke (the
+  same origin as the opening, in reverse) until the letter fills the view and
+  the ground is black. Out of the black, the corridor and the Mission Control
+  board return, but at rest: all twelve session cards complete, the camera
+  barely breathing, “Under control.” Then the board slides up and a terminal
+  rises, types the two setup lines, and unfolds “Your first goal” as a real
+  text field with the GitHub action. Enter plans the typed goal into four
+  focused tasks from a small word list, no model and no server: the resting
+  cards fade, the board narrows to one row, four cards fly in from the depth,
+  run, and complete under “One goal. Four focused tasks. One review.” Below
+  720px the resting cards drop their status word to fit two columns. Without
+  JavaScript or with reduced motion the exit is a plain dark block with the
+  terminal.
 - Ambient changes are sparse and product-relevant.
 - `prefers-reduced-motion` removes ambient and scroll animation, expands the run
   to its final state, and leaves the chooser in its completed review state.
