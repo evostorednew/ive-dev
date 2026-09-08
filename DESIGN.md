@@ -87,8 +87,10 @@ Rules:
 
 The page follows a 60 / 30 / 10 allocation. Roughly 60% is the cool light work
 surface, 30% is neutral anthracite across bounded control and verification
-fields, and 10% is functional accent. Amber means active execution; blue means
-routing. Dark mode reverses the grounds while preserving those roles.
+fields, and 10% is functional accent. One electric blue means active execution
+and routing; it is also the mark’s signal dot. Dark mode reverses the grounds
+while preserving those roles. (Amber was the accent until 2026-09-08 and was
+retired because it read as a warning and dated the anthracite.)
 
 ```text
 LIGHT
@@ -106,7 +108,7 @@ LIGHT
 Semantic colors split marks from readable ink:
 
 ```text
---running       #FFB000   --running-ink   #8A5200
+--running       #1647FF   --running-ink   #0E36C7
 --complete      #087A4B   --complete-ink  #066B41
 --waiting       #98A0A8   --waiting-ink   #5A6067
 --attention     #C83B24   --attention-ink #A82F1B
@@ -120,11 +122,11 @@ DARK
 --bg-glass rgba(16, 16, 18, 0.82)
 --line #26262B · --line-strong #34343B
 --text #EDEDE9 · --text-dim #A3A39E · --text-faint #85857F
---running / --running-ink #FFB454
+--running / --running-ink #5B8CFF
 --complete / --complete-ink #7DCE82
 --waiting / --waiting-ink #8A8A93
 --attention / --attention-ink #F2545B
---route / --route-ink #6BB6C9 · --focus #FFB454
+--route / --route-ink #5B8CFF · --focus #5B8CFF
 ```
 
 Mission Control, the architecture security ledger, and the footer use the
@@ -139,11 +141,11 @@ The high-intent hero and final CTAs use the execution accent:
 
 Rules:
 
-- Amber is earned by live/running marks and the two run actions only.
-- Blue is reserved for routes, architecture paths, and routing links.
+- Blue is earned by live/running marks, the two run actions, routes,
+  architecture paths, and routing links. Nothing else is blue.
 - No broad multicolor gradients, neon glow, purple, or decorative saturation.
-  The hero may use a low-opacity grid, a contained amber signal field, and one
-  white/amber specular glint to make Mission Control feel physically present.
+  The hero may use a low-opacity grid, a contained blue signal field, and one
+  white/blue specular glint to make Mission Control feel physically present.
 - The focus ring remains visible on every interactive control.
 
 ## Status language

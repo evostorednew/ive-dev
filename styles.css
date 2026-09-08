@@ -10,15 +10,15 @@
   --bg-raised: #FFFFFF;
   --bg-inset: #EBEDEF;
   --bg-glass: rgba(244, 245, 246, 0.82);
-  --on-accent: #15171A;
+  --on-accent: #FFFFFF;
   --line: #DDE0E3;
   --line-strong: #BFC4C9;
   --text: #15171A;
   --text-dim: #4A4F55;
   --text-faint: #6B7178;
   /* semantic state — base tokens are fills and marks; ink tokens are text */
-  --running: #FFB000;
-  --running-ink: #8A5200;
+  --running: #1647FF;
+  --running-ink: #0E36C7;
   --complete: #087A4B;
   --complete-ink: #066B41;
   --waiting: #98A0A8;
@@ -61,17 +61,17 @@
   --text: #EDEDE9;
   --text-dim: #A3A39E;
   --text-faint: #85857F;
-  --running: #FFB454;
-  --running-ink: #FFB454;
+  --running: #5B8CFF;
+  --running-ink: #5B8CFF;
   --complete: #7DCE82;
   --complete-ink: #7DCE82;
   --waiting: #8A8A93;
   --waiting-ink: #8A8A93;
   --attention: #F2545B;
   --attention-ink: #F2545B;
-  --route: #6BB6C9;
-  --route-ink: #6BB6C9;
-  --focus: #FFB454;
+  --route: #5B8CFF;
+  --route-ink: #5B8CFF;
+  --focus: #5B8CFF;
   --invert-bg: #F4F3EF;
   --invert-raised: #FFFFFF;
   --invert-text: #1A1A18;
@@ -81,20 +81,20 @@
 
 /* 60 / 30 / 10 palette: the page stays predominantly on the cool light
    work surface; these bounded control fields provide the anthracite 30%.
-   Amber marks active execution and blue marks routing, never decoration. */
+   One electric blue marks active execution and routing, never decoration. */
 .surface-secondary {
   --bg: #15171A;
   --bg-raised: #1E2125;
   --bg-inset: #111316;
   --bg-glass: rgba(21, 23, 26, 0.88);
-  --on-accent: #15171A;
+  --on-accent: #0B0B0D;
   --line: #2B2F34;
   --line-strong: #444A51;
   --text: #F4F5F6;
   --text-dim: #B5BBC2;
   --text-faint: #8E969F;
-  --running: #FFB454;
-  --running-ink: #FFB454;
+  --running: #5B8CFF;
+  --running-ink: #5B8CFF;
   --complete: #7DCE82;
   --complete-ink: #7DCE82;
   --waiting: #98A0A8;
@@ -103,7 +103,7 @@
   --attention-ink: #F06A58;
   --route: #6F91FF;
   --route-ink: #8AA5FF;
-  --focus: #FFB454;
+  --focus: #5B8CFF;
   background: var(--bg);
   color: var(--text);
 }
@@ -113,14 +113,14 @@
   --bg-raised: #FFFFFF;
   --bg-inset: #EBEDEF;
   --bg-glass: rgba(244, 245, 246, 0.88);
-  --on-accent: #15171A;
+  --on-accent: #FFFFFF;
   --line: #DDE0E3;
   --line-strong: #BFC4C9;
   --text: #15171A;
   --text-dim: #4A4F55;
   --text-faint: #6B7178;
-  --running: #FFB000;
-  --running-ink: #8A5200;
+  --running: #1647FF;
+  --running-ink: #0E36C7;
   --complete: #087A4B;
   --complete-ink: #066B41;
   --waiting: #98A0A8;
@@ -2741,7 +2741,7 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
   opacity: 0;
   will-change: transform, opacity;
 }
-.scene-board .sb-count { color: #FFB454; }
+.scene-board .sb-count { color: #5B8CFF; }
 .scene-swarm { position: absolute; inset: 0; }
 .scene-agent {
   position: absolute; left: 50%; top: 50%;
@@ -2763,7 +2763,7 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
 .scene-agent .sa-id { font-weight: 600; }
 .scene-agent .sa-st { display: inline-flex; align-items: center; gap: 5px; color: #8A8A93; }
 .scene-agent .sa-line { margin: 0; font-size: 10.5px; color: #7E7E86; }
-.scene-agent[data-st="run"] .sa-st { color: #FFB454; }
+.scene-agent[data-st="run"] .sa-st { color: #5B8CFF; }
 .scene-agent[data-st="att"] .sa-st { color: #F2545B; }
 .scene-agent[data-st="att"] { border-color: rgba(242, 84, 91, 0.55); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(242, 84, 91, 0.15); }
 .scene-agent[data-st="wait"] .sa-st { color: #8A8A93; }
