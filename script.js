@@ -505,7 +505,6 @@
     var ringsBox = mark.querySelector('[data-scene-rings]');
     var swarmBox = mark.querySelector('[data-scene-swarm]');
     var board = mark.querySelector('[data-scene-board]');
-    var exit = mark.querySelector('[data-scene-exit]');
     var capA = mark.querySelector('[data-scene-caption="a"]');
     var capB = mark.querySelector('[data-scene-caption="b"]');
     var countA = mark.querySelector('[data-scene-count="a"]');
@@ -516,8 +515,9 @@
     /* story on the scroll axis */
     var T_CHAOS = 0.30;                 /* agents swarm */
     var T_CTRL = 0.50;                  /* they come under control */
-    var T_END = 0.64;                   /* the viewer flies out of the tunnel, the mark stands */
-    var P_START = 0.70, P_END = 0.90;   /* the name unfolds, then holds */
+    var T_END = 0.55;                   /* everything has gone dark; the mark is there, the viewer inside a stroke */
+    var Z_END = 0.72;                   /* zoomed out of the letters, the mark stands */
+    var P_START = 0.76, P_END = 0.92;   /* the name unfolds, then holds */
     var RINGS = 8, GRID = 120;
     var AGENTS = [
       ['s-01 · backend', 'updating session handling'], ['s-02 · frontend', 'redirect flow next'],
@@ -613,6 +613,11 @@
         top: mark.getBoundingClientRect().top + window.scrollY,
         travel: Math.max(1, mark.offsetHeight - pin.offsetHeight)
       };
+      /* zoom origin: the V's left stroke at mid height, as a fraction of the tight IVE line */
+      m.originX = column ? (0.31 * capEm[1]) / m.a : (capEm[0] + GAP0 + 0.31 * capEm[1]) / m.a;
+      var size0 = Math.min(availW / m.a, availH / lineEmH);
+      var diag = Math.sqrt(m.w * m.w + m.h * m.h);
+      m.zoom0 = Math.max(10, 1.45 * diag / (0.19 * size0));
       lastRaw = -1;
     }
 
@@ -624,15 +629,12 @@
       age += dt;
       clock += dt * (1 - k);                 /* the swarm's own time slows as control takes over */
       var emerge = ease(age / 1.4);          /* out of black */
-      var lightFade = 1 - ease(g / 0.35);   /* the board stays behind as the viewer flies out */
-      var still = (1 - k) * lightFade;
-      var rush = g;                          /* the way out: the corridor rushes past */
-      /* the exit: a small bright opening at the vanishing point from the start, then it comes at the viewer */
-      var base = 0.04 + 0.03 * c;
-      var sM = g > 0 ? base * Math.pow(3.4 / base, rush) : base;
-      scene.style.setProperty('--scene-lines', (emerge * (0.35 + 0.65 * Math.max(1 - k, rush)) * (1 - ease((rush - 0.8) / 0.2))).toFixed(3));
-      scene.style.setProperty('--scene-scan', (emerge * (1 - ease((rush - 0.4) / 0.5))).toFixed(3));
-      scene.style.setProperty('--scene-vig', (1 - ease(rush / 0.6)).toFixed(3));
+      var dim = 1 - g;                       /* after control, everything goes dark */
+      var lightFade = dim;
+      var still = (1 - k) * dim;
+      scene.style.setProperty('--scene-lines', (emerge * (0.35 + 0.65 * (1 - k)) * dim).toFixed(3));
+      scene.style.setProperty('--scene-scan', (emerge * dim).toFixed(3));
+      scene.style.setProperty('--scene-vig', '1');
 
       /* camera: a slow drift while flying, dead still once in control */
       var swayX = Math.sin(clock * 0.37) * 16 * still, swayY = Math.cos(clock * 0.29) * 10 * still;
@@ -640,18 +642,18 @@
       cam.style.transform = 'translate(' + swayX.toFixed(1) + 'px, ' + swayY.toFixed(1) + 'px) rotate(' + swayR.toFixed(2) + 'deg)';
 
       /* corridor: the grid flows past, faster with scroll, then stops */
-      var dist = (clock * 90 + c * 900 + rush * 3600) % GRID;
+      var dist = (clock * 90 + c * 900) % GRID;
       walls.floor.style.transform = 'rotateX(-90deg) translateY(' + (-dist).toFixed(1) + 'px)';
       walls.ceil.style.transform = 'rotateX(90deg) translateY(' + dist.toFixed(1) + 'px)';
       walls.left.style.transform = 'rotateY(90deg) translateX(' + (-dist).toFixed(1) + 'px)';
       walls.right.style.transform = 'rotateY(-90deg) translateX(' + dist.toFixed(1) + 'px)';
 
       /* ring frames rushing past */
-      var camz = clock * 0.32 + c * 1.4 + rush * 5;
+      var camz = clock * 0.32 + c * 1.4;
       for (var i = 0; i < RINGS; i++) {
         var d = (i / RINGS + 1 - (camz - Math.floor(camz))) % 1;
         var s = 2.8 / (1 + d * 26);
-        var o = 0.5 * (0.4 + 0.6 * (1 - d)) * ease(d / 0.06) * ease((1 - d) / 0.3) * emerge * (1 - k + rush) * (1 - ease((rush - 0.75) / 0.25));
+        var o = 0.5 * (0.4 + 0.6 * (1 - d)) * ease(d / 0.06) * ease((1 - d) / 0.3) * emerge * still;
         rings[i].style.transform = 'translate(-50%, -50%) scale(' + s.toFixed(4) + ')';
         rings[i].style.opacity = o.toFixed(3);
       }
@@ -700,18 +702,13 @@
 
       /* captions and live counts */
       capA.style.opacity = (ease((age - 0.6) / 0.8) * (1 - ease(k / 0.4))).toFixed(3);
-      capB.style.opacity = (ease((k - 0.55) / 0.35) * (1 - ease(g / 0.25))).toFixed(3);
+      capB.style.opacity = (ease((k - 0.55) / 0.35) * dim).toFixed(3);
       var textA = counts.run + ' running · ' + counts.att + ' retrying · ' + counts.wait + ' waiting';
       var textB = counts.done + ' complete' + (counts.run ? ' · ' + counts.run + ' running' : '');
       if (textA !== lastCountA) { countA.textContent = textA; lastCountA = textA; }
       if (textB !== lastCountB) { countB.textContent = textB; lastCountB = textB; }
 
-      /* the opening comes at the viewer; outside, the mark already stands and grows with it */
-      exit.style.transform = 'translate(-50%, -50%) scale(' + sM.toFixed(4) + ')';
-      exit.style.opacity = (emerge * (0.6 + 0.4 * ease(g / 0.3))).toFixed(3);
-      mark.style.setProperty('--mark-pop', Math.max(0.04, Math.min(1, sM)).toFixed(4));
-      mark.classList.toggle('is-dawning', g > 0.001);
-      root.classList.toggle('mark-dark', sM < 1.15);
+      root.classList.add('mark-dark');
     }
 
     function renderUnfold() {
@@ -731,6 +728,19 @@
         contentEm = m.a - 2 * GAP0 + m.b * reveal + 2 * gap;
       }
       var size = Math.min(m.availW / contentEm, m.availH / m.lineEmH);
+      /* out of the letters: the view starts inside the V's left stroke and zooms out until the mark stands */
+      var z = clamp((raw - T_END) / (Z_END - T_END));
+      var pop = Math.pow(m.zoom0, 1 - ease(z));
+      var shiftX = 0, shiftY = 0, tPop = 1;
+      if (pop > 1.0001) {
+        /* browsers stop drawing glyphs past a few thousand px: grow the type up to a cap, the rest is a transform about the same point */
+        var fontPop = Math.min(pop, 6000 / size);
+        tPop = pop / fontPop;
+        var W1 = m.a * size;
+        shiftX = m.column ? -m.originX * W1 * (fontPop - 1) : -(m.originX - 0.5) * W1 * (fontPop - 1);
+        size *= fontPop;
+      }
+      root.classList.remove('mark-dark');
       var alpha = ease(p / 0.28);
       var slide = -0.15 * (1 - reveal);
       var fade = 0.35 * (1 - reveal);
@@ -741,6 +751,10 @@
       st.setProperty('--mark-slide', slide.toFixed(4) + 'em');
       st.setProperty('--mark-fade', fade.toFixed(4) + 'em');
       st.setProperty('--mark-alpha', alpha.toFixed(3));
+      st.setProperty('--mark-shift-x', shiftX.toFixed(1) + 'px');
+      st.setProperty('--mark-shift-y', shiftY.toFixed(1) + 'px');
+      st.setProperty('--mark-pop', tPop.toFixed(4));
+      st.setProperty('--mark-origin-x', (m.originX * 100).toFixed(2) + '%');
     }
 
     function frame(ts) {
@@ -753,7 +767,7 @@
       var inView = window.scrollY < m.top + m.travel + m.h;
       if (raw !== lastRaw) {
         mark.classList.toggle('is-lit', lit);
-        if (lit) { root.classList.remove('mark-dark'); mark.classList.remove('is-dawning'); mark.style.setProperty('--mark-pop', '1'); }
+        if (!lit) root.classList.add('mark-dark');
         renderUnfold();
         mark.style.setProperty('--mark-hint', (lit || !hintReady) ? '0' : (1 - ease(raw / 0.03)).toFixed(3));
         lastRaw = raw;

@@ -205,8 +205,10 @@ Grammar: **Branch → Execute → Verify → Proof.**
   the viewer in depth, running, retrying, waiting, with a live count under
   the caption. The swarm moves on its own; scrolling drives the story. Under
   “Under control.” the cards glide onto one Mission Control board and settle
-  to complete, a shock ring runs ahead of the light, then light takes the
-  ground and the black mark “IVE” stands, filling the viewport. The header sits on the black
+  to complete. Then everything goes dark, and the viewer zooms out of the
+  letters themselves: the view starts inside the V’s left stroke, the stroke
+  edges recede, the light page appears around the black shapes, I and E
+  come in from the sides, until the mark “IVE” stands, filling the viewport. The header sits on the black
   ground in light ink until then. Scrolling on pulls the three letters apart
   while “ntegrated”, “ibecoding” and “nvironment” slide out from behind them
   until the full name stands. The type size always follows the room the line
