@@ -296,7 +296,7 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
   display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px;
   text-decoration: none; margin-right: auto;
 }
-.wordmark-main { display: inline-flex; align-items: baseline; gap: 7px; line-height: 0.9; }
+.wordmark-main { display: inline-flex; align-items: baseline; gap: 7px; line-height: 0.9; color: inherit; text-decoration: none; }
 .wordmark-text {
   font-family: var(--display);
   font-weight: 800; font-size: 21px;
@@ -311,7 +311,11 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
   letter-spacing: 0.105em;
   color: var(--text-faint);
   white-space: nowrap;
+  text-decoration: none;
+  transition: color var(--fast);
+  padding: 6px 4px; margin: -6px 0 -6px -3px; /* a real tap target without moving the mark */
 }
+.wordmark-by:hover, .wordmark-by:focus-visible { color: var(--text); }
 .wordmark-dot {
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--running);
@@ -2518,6 +2522,18 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
   animation: mark-hint-run 1.7s cubic-bezier(0.45, 0, 0.2, 1) infinite;
 }
 @keyframes mark-hint-run { 0% { transform: translateY(-100%); } 55%, 100% { transform: translateY(100%); } }
+/* the maker's signature: appears once the name stands */
+.mark-by {
+  position: absolute; left: 0; right: 0; bottom: clamp(24px, 6vh, 56px);
+  margin: 0;
+  text-align: center;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+}
+.mark-by a { color: var(--text-faint); text-decoration: none; transition: color var(--fast); }
+.mark-by a:hover, .mark-by a:focus-visible { color: var(--text); }
+.mark-live .mark .mark-by { opacity: var(--mark-by, 0); pointer-events: none; }
+.mark-live .mark.has-by .mark-by { pointer-events: auto; }
+.mark-live .mark:not(.is-lit) .mark-by { visibility: hidden; }
 
 .mark-live .mark {
   --mark-size: min(50vw, 56vh);

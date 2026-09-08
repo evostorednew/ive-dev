@@ -755,6 +755,9 @@
       st.setProperty('--mark-shift-y', shiftY.toFixed(1) + 'px');
       st.setProperty('--mark-pop', tPop.toFixed(4));
       st.setProperty('--mark-origin-x', (m.originX * 100).toFixed(2) + '%');
+      var by = ease((p - 0.78) / 0.2);
+      st.setProperty('--mark-by', by.toFixed(3));
+      mark.classList.toggle('has-by', by > 0.5);
     }
 
     function frame(ts) {

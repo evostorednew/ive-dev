@@ -219,8 +219,11 @@ Grammar: **Branch → Execute → Verify → Proof.**
   until the full name stands. The type size always follows the room the line
   needs, so the name never leaves the viewport. Below 720px the letters stack
   and unfold to the right. A “Scroll” cue with a running line sits below at
-  the start. Without JavaScript or with reduced motion the full name stands
-  as a plain block. The cards are product objects, not characters.
+  the start. Once the name stands, the maker's signature “made by AIFOREU ↗”
+  appears at the foot of the pin and links to AI for Gov; in the header,
+  “by AIFOREU” under the wordmark is that same link. Without JavaScript or
+  with reduced motion the full name stands as a plain block with the
+  signature below. The cards are product objects, not characters.
 - The hero enters as one orchestrated sequence once it scrolls into view;
   Mission Control may respond by no more than 2.2 degrees to a fine pointer.
 - “Run at a glance” advances with the example state and always remains readable
