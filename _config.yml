@@ -1,0 +1,5 @@
+# GitHub Pages (Jekyll): keep internal docs out of the published site
+exclude:
+  - README.md
+  - DESIGN.md
+  - .gitignore
