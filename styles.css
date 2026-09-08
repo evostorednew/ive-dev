@@ -2613,3 +2613,230 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
   .run-choice:hover,
   .run-choice.is-selected { padding-left: 16px; }
 }
+
+
+/* ── mark: IVE unfolds into its name on scroll ─────────── */
+/* Static state (no JS or reduced motion): the full name, one block.
+   Live state (html.mark-live): a 100vh pin; script.js drives the
+   custom properties from scroll progress. The type size always follows
+   the room the letters plus the revealed word remainders need, so the
+   line never leaves the viewport while it is being pulled apart. */
+.mark {
+  --mark-size: clamp(28px, 4.4vw, 108px);
+  --mark-gap: 0.24em;
+  --mark-reveal: 1;
+  --mark-slide: 0em;
+  --mark-alpha: 1;
+  --mark-hint: 0;
+  position: relative;
+}
+.mark-pin {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 58vh;
+  padding: clamp(132px, 17vh, 200px) var(--pad) clamp(40px, 7vh, 88px);
+  overflow: clip;
+}
+.mark-line {
+  margin: 0;
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
+  gap: 0.1em var(--mark-gap);
+  max-width: var(--maxw);
+  font-family: var(--display);
+  font-weight: 800;
+  font-stretch: 125%;
+  font-size: var(--mark-size);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  color: var(--text);
+  text-align: center;
+  font-kerning: normal;
+}
+.mark-word { display: inline-flex; align-items: baseline; white-space: nowrap; }
+.mark-cap { display: inline-block; }
+.mark-rest { display: inline-block; overflow: hidden; }
+.mark-rest-text { display: inline-block; color: var(--text-dim); }
+.mark-hint {
+  position: absolute; left: 0; right: 0; bottom: clamp(20px, 4.5vh, 40px);
+  margin: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-faint);
+  text-align: center;
+  opacity: var(--mark-hint);
+  pointer-events: none;
+}
+.mark-hint-line { position: relative; width: 1px; height: 48px; overflow: hidden; background: color-mix(in srgb, currentColor 30%, transparent); }
+.mark-hint-line::after {
+  content: ''; position: absolute; left: 0; top: 0; width: 1px; height: 100%;
+  background: currentColor;
+  animation: mark-hint-run 1.7s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+}
+@keyframes mark-hint-run { 0% { transform: translateY(-100%); } 55%, 100% { transform: translateY(100%); } }
+
+.mark-live .mark {
+  --mark-size: min(50vw, 56vh);
+  --mark-gap: 0.02em;
+  --mark-reveal: 0;
+  --mark-slide: -0.15em;
+  --mark-fade: 0.35em;
+  --mark-alpha: 0;
+  --mark-hint: 1;
+  --mark-pop: 1;
+  height: 520vh;
+}
+/* scene: inside the machine. A grid corridor rushes past, coding agents swarm
+   as session cards around the viewer, come under control onto one Mission
+   Control board, then light takes the ground and the mark stands. Time drives
+   the swarm, scroll drives the story. */
+.scene { display: none; position: absolute; inset: 0; overflow: hidden; background: #000; }
+.mark-live .mark:not(.is-lit) .scene { display: block; }
+.mark-live .mark:not(.is-lit) .mark-pin { background: #000; }
+.mark-live .mark:not(.is-lit):not(.is-dawning) .mark-line { visibility: hidden; }
+.mark-live .mark:not(.is-lit) .mark-line { color: #000; }
+.mark-live .mark:not(.is-lit) .mark-rest-text { color: #000; }
+.mark-live .mark:not(.is-lit) .mark-hint { color: #C2C7CC; }
+.mark-live .mark-line { position: relative; z-index: 1; }
+.scene-cam { position: absolute; inset: 0; will-change: transform; }
+.scene-space { position: absolute; inset: 0; perspective: 720px; perspective-origin: 50% 50%; }
+.scene-wall {
+  position: absolute;
+  background-image:
+    linear-gradient(rgba(244, 245, 246, 0.27) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 245, 246, 0.27) 1px, transparent 1px);
+  background-size: 120px 120px;
+  opacity: var(--scene-lines, 0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+.wall-floor { left: 0; width: 100%; top: 100%; height: 2640px; transform-origin: 50% 0; transform: rotateX(-90deg); -webkit-mask-image: linear-gradient(to bottom, #000 0, transparent 78%); mask-image: linear-gradient(to bottom, #000 0, transparent 78%); }
+.wall-ceil { left: 0; width: 100%; bottom: 100%; height: 2640px; transform-origin: 50% 100%; transform: rotateX(90deg); -webkit-mask-image: linear-gradient(to top, #000 0, transparent 78%); mask-image: linear-gradient(to top, #000 0, transparent 78%); }
+.wall-left { top: 0; height: 100%; left: 0; width: 2640px; transform-origin: 0 50%; transform: rotateY(90deg); -webkit-mask-image: linear-gradient(to right, #000 0, transparent 78%); mask-image: linear-gradient(to right, #000 0, transparent 78%); }
+.wall-right { top: 0; height: 100%; right: 0; width: 2640px; transform-origin: 100% 50%; transform: rotateY(-90deg); -webkit-mask-image: linear-gradient(to left, #000 0, transparent 78%); mask-image: linear-gradient(to left, #000 0, transparent 78%); }
+.scene-rings { position: absolute; inset: 0; }
+.scene-ring {
+  position: absolute; left: 50%; top: 50%;
+  width: 100%; height: 100%;
+  border: 2px solid #F4F5F6;
+  border-radius: clamp(10px, 2.4vmin, 28px);
+  transform: translate(-50%, -50%) scale(0.1);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.scene-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: var(--scene-vig, 1);
+  background: radial-gradient(ellipse at 50% 50%, transparent 48%, rgba(0, 0, 0, 0.72) 100%);
+}
+.scene-board {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%) translateY(-14px);
+  border: 1px solid #34343B; border-radius: 8px;
+  background: rgba(16, 16, 18, 0.72);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  padding: 8px 14px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #85857F;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.scene-board .sb-count { color: #FFB454; }
+.scene-swarm { position: absolute; inset: 0; }
+.scene-agent {
+  position: absolute; left: 50%; top: 50%;
+  display: flex; flex-direction: column; gap: 6px;
+  min-width: 172px;
+  padding: 8px 11px 9px;
+  border-radius: 6px;
+  background: #141417;
+  border: 1px solid #34343B;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  color: #F4F5F6;
+  font-family: var(--mono); font-size: 11px; line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  will-change: transform, opacity;
+}
+.scene-agent .sa-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.scene-agent .sa-id { font-weight: 600; }
+.scene-agent .sa-st { display: inline-flex; align-items: center; gap: 5px; color: #8A8A93; }
+.scene-agent .sa-line { margin: 0; font-size: 10.5px; color: #7E7E86; }
+.scene-agent[data-st="run"] .sa-st { color: #FFB454; }
+.scene-agent[data-st="att"] .sa-st { color: #F2545B; }
+.scene-agent[data-st="att"] { border-color: rgba(242, 84, 91, 0.55); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(242, 84, 91, 0.15); }
+.scene-agent[data-st="wait"] .sa-st { color: #8A8A93; }
+.scene-agent[data-st="done"] .sa-st { color: #7DCE82; }
+.scene-caption {
+  position: absolute; left: var(--pad); right: var(--pad); top: 15%;
+  margin: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+  color: #C2C7CC;
+  text-align: center;
+  opacity: 0;
+}
+.scene-caption .sc-count { font-size: 11px; letter-spacing: 0.12em; color: #85857F; min-height: 1em; }
+.scene-exit {
+  position: absolute; left: 50%; top: 50%; width: 100%; height: 100%;
+  transform: translate(-50%, -50%) scale(0.05);
+  background: #F4F5F6;
+  border-radius: clamp(10px, 2.4vmin, 28px);
+  box-shadow: 0 0 90px 24px rgba(244, 245, 246, 0.42);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.scene-scan {
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 3px);
+  opacity: var(--scene-scan, 0);
+}
+@media (max-width: 720px) {
+  .scene-agent { min-width: 150px; }
+  .scene-caption { top: 12%; }
+}
+html.mark-dark .nav {
+  --text: #F4F5F6; --text-dim: #A6ADB4; --text-faint: #85857F;
+  --line: #2B2F34; --line-strong: #34343B;
+  --bg: #000; --bg-raised: #17171A; --bg-glass: rgba(0, 0, 0, 0.82);
+}
+.mark-live .mark-pin {
+  position: sticky; top: 0;
+  height: 100vh; height: 100svh;
+  min-height: 0;
+  padding: 0 var(--pad);
+  contain: layout paint;
+}
+.mark-live .mark-line { flex-wrap: nowrap; white-space: nowrap; will-change: font-size; transform: scale(var(--mark-pop)); transform-origin: 50% 50%; }
+.mark-live .mark-rest {
+  width: calc(var(--rest-em, 0) * 1em * var(--mark-reveal));
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - var(--mark-fade, 0em)), transparent 100%);
+  mask-image: linear-gradient(90deg, #000 calc(100% - var(--mark-fade, 0em)), transparent 100%);
+}
+.mark-live .mark-rest-text { transform: translateX(var(--mark-slide)); opacity: var(--mark-alpha); }
+.mark.is-measuring { --mark-reveal: 1; --mark-gap: 0.24em; }
+.mark.is-measuring .mark-line { font-size: 100px !important; transform: none !important; visibility: hidden; }
+.mark.is-measuring .mark-rest { width: auto !important; }
+
+/* the hero follows the mark: less top clearance, entrance waits until it is in view */
+.mark-live .mark + .hero { padding-top: clamp(84px, 10vh, 132px); }
+.mark-live .hero:not(.is-in) .hero-copy > *,
+.mark-live .hero:not(.is-in) .hero-stage,
+.mark-live .hero:not(.is-in) .hero-glance { animation-play-state: paused; }
+
+@media (max-width: 720px) {
+  .mark { --mark-size: clamp(38px, 11.5vw, 64px); }
+  .mark-live .mark { --mark-size: min(56vw, 19vh); height: 460vh; }
+  .mark-pin { align-items: flex-start; }
+  .mark-line {
+    flex-direction: column; align-items: flex-start; justify-content: center;
+    gap: 0.06em 0 !important;
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark-hint-line::after { animation: none; transform: none; }
+  .scene { display: none !important; }
+}

@@ -199,8 +199,23 @@ the dedicated Architecture page or in the repository documentation.
 Grammar: **Branch → Execute → Verify → Proof.**
 
 - The end-to-end run uses CSS transforms with vanilla JavaScript.
-- The hero enters as one orchestrated sequence; Mission Control may respond by
-  no more than 2.2 degrees to a fine pointer.
+- The page opens inside the machine: black ground, a grid corridor (floor,
+  ceiling, walls in true perspective) rushing past with ring frames, a slow
+  camera drift, and coding agents as two-line session cards swarming around
+  the viewer in depth, running, retrying, waiting, with a live count under
+  the caption. The swarm moves on its own; scrolling drives the story. Under
+  “Under control.” the cards glide onto one Mission Control board and settle
+  to complete, a shock ring runs ahead of the light, then light takes the
+  ground and the black mark “IVE” stands, filling the viewport. The header sits on the black
+  ground in light ink until then. Scrolling on pulls the three letters apart
+  while “ntegrated”, “ibecoding” and “nvironment” slide out from behind them
+  until the full name stands. The type size always follows the room the line
+  needs, so the name never leaves the viewport. Below 720px the letters stack
+  and unfold to the right. A “Scroll” cue with a running line sits below at
+  the start. Without JavaScript or with reduced motion the full name stands
+  as a plain block. The cards are product objects, not characters.
+- The hero enters as one orchestrated sequence once it scrolls into view;
+  Mission Control may respond by no more than 2.2 degrees to a fine pointer.
 - “Run at a glance” advances with the example state and always remains readable
   without motion.
 - Near the end, the run chooser lets the reader switch between three truthful

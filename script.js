@@ -484,4 +484,320 @@
     });
   });
 
+  /* ── mark: inside the machine — agents swarm, come under control, IVE unfolds ── */
+  (function () {
+    var root = document.documentElement;
+    var mark = document.querySelector('[data-mark]');
+    if (!mark) return;
+    if (reduceMotion || !root.classList.contains('mark-live')) {
+      root.classList.remove('mark-live');
+      root.classList.remove('mark-dark');
+      return;
+    }
+    var pin = mark.querySelector('[data-mark-pin]');
+    var line = mark.querySelector('[data-mark-line]');
+    var caps = Array.prototype.slice.call(mark.querySelectorAll('[data-mark-cap]'));
+    var rests = Array.prototype.slice.call(mark.querySelectorAll('[data-mark-rest]'));
+    var scene = mark.querySelector('[data-scene]');
+    var cam = mark.querySelector('[data-scene-cam]');
+    var walls = {};
+    Array.prototype.forEach.call(mark.querySelectorAll('[data-wall]'), function (w) { walls[w.getAttribute('data-wall')] = w; });
+    var ringsBox = mark.querySelector('[data-scene-rings]');
+    var swarmBox = mark.querySelector('[data-scene-swarm]');
+    var board = mark.querySelector('[data-scene-board]');
+    var exit = mark.querySelector('[data-scene-exit]');
+    var capA = mark.querySelector('[data-scene-caption="a"]');
+    var capB = mark.querySelector('[data-scene-caption="b"]');
+    var countA = mark.querySelector('[data-scene-count="a"]');
+    var countB = mark.querySelector('[data-scene-count="b"]');
+    var hero = document.querySelector('.hero');
+    var columnQuery = window.matchMedia('(max-width: 720px)');
+    var GAP0 = 0.02, GAP1 = 0.24;      /* em between the words: wordmark-tight → real word gap */
+    /* story on the scroll axis */
+    var T_CHAOS = 0.30;                 /* agents swarm */
+    var T_CTRL = 0.50;                  /* they come under control */
+    var T_END = 0.64;                   /* the viewer flies out of the tunnel, the mark stands */
+    var P_START = 0.70, P_END = 0.90;   /* the name unfolds, then holds */
+    var RINGS = 8, GRID = 120;
+    var AGENTS = [
+      ['s-01 · backend', 'updating session handling'], ['s-02 · frontend', 'redirect flow next'],
+      ['s-03 · tests', 'running checks again'], ['s-04 · review', 'waiting on changes'],
+      ['s-05 · docs', '3 files changed'], ['s-06 · api', 'code_verifier route'],
+      ['s-07 · auth', 'src/auth/pkce.ts'], ['s-08 · build', 'bundling · 2 warnings'],
+      ['s-09 · lint', '12 files checked'], ['s-10 · migrate', 'schema v14 → v15'],
+      ['s-11 · e2e', 'sign-in flow · attempt 2'], ['s-12 · release', 'changelog drafted']
+    ];
+    var STATUS = { run: ['●', 'running'], att: ['!', 'retrying'], wait: ['◇', 'waiting'], done: ['✓', 'complete'] };
+    var m = null;                       /* measurements in em (taken at 100px) */
+    var raw = 0, lastRaw = -1;
+    var hintReady = false;              /* the scroll hint waits a moment on the black screen */
+    var clock = 0, age = 0, lastTs = null, looping = false, frameNo = 0;
+    var lastCountA = '', lastCountB = '';
+
+    var ease = function (x) {
+      x = x < 0 ? 0 : x > 1 ? 1 : x;
+      return x * x * (3 - 2 * x);
+    };
+    var clamp = function (x) { return x < 0 ? 0 : x > 1 ? 1 : x; };
+    var rnd = function (i, k) { var x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return x - Math.floor(x); };
+
+    var rings = [];
+    for (var r = 0; r < RINGS; r++) {
+      var ring = document.createElement('div');
+      ring.className = 'scene-ring';
+      ringsBox.appendChild(ring);
+      rings.push(ring);
+    }
+    var agents = AGENTS.map(function (def, i) {
+      var el = document.createElement('div');
+      el.className = 'scene-agent';
+      el.innerHTML = '<div class="sa-head"><span class="sa-id"></span><span class="sa-st"><span class="glyph"></span><span class="sa-word"></span></span></div><p class="sa-line"></p>';
+      el.querySelector('.sa-id').textContent = def[0];
+      el.querySelector('.sa-line').textContent = def[1];
+      swarmBox.appendChild(el);
+      return {
+        el: el, glyph: el.querySelector('.glyph'), word: el.querySelector('.sa-word'), st: '',
+        x0: (rnd(i, 1) * 2 - 1) * 0.9, y0: (rnd(i, 2) * 2 - 1) * 0.8, z0: rnd(i, 3),
+        v: (0.045 + 0.06 * rnd(i, 4)) * (rnd(i, 5) < 0.3 ? -1 : 1),
+        ax: 0.12 + 0.3 * rnd(i, 6), ay: 0.08 + 0.22 * rnd(i, 7),
+        wx: 0.3 + 0.5 * rnd(i, 8), wy: 0.25 + 0.45 * rnd(i, 9),
+        px: rnd(i, 10) * 6.283, py: rnd(i, 11) * 6.283,
+        rot: 3 + 7 * rnd(i, 12), flick: 0.6 + 0.8 * rnd(i, 13)
+      };
+    });
+
+    function setStatus(a, st) {
+      if (a.st === st) return;
+      a.st = st;
+      a.el.setAttribute('data-st', st);
+      a.glyph.textContent = STATUS[st][0];
+      a.word.textContent = STATUS[st][1];
+    }
+
+    function measure() {
+      mark.classList.add('is-measuring');
+      var capEm = caps.map(function (c) { return c.getBoundingClientRect().width / 100; });
+      var restEm = rests.map(function (r) { return r.getBoundingClientRect().width / 100; });
+      var lineEmH = line.getBoundingClientRect().height / 100;
+      mark.classList.remove('is-measuring');
+      rests.forEach(function (r, i) {
+        r.parentNode.style.setProperty('--rest-em', restEm[i].toFixed(4));
+      });
+      var cs = getComputedStyle(pin);
+      var availW = pin.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      availW = Math.min(availW, 1480) * 0.9;
+      var availH = pin.clientHeight * 0.56;
+      var column = columnQuery.matches;
+      var sumCap = capEm.reduce(function (a, b) { return a + b; }, 0);
+      var sumRest = restEm.reduce(function (a, b) { return a + b; }, 0);
+      /* board slots for the controlled agents */
+      var cols = column ? 2 : 4, rows = AGENTS.length / cols;
+      var cw = column ? 162 : 214, ch = column ? 58 : 66;
+      var boardScale = column ? 1 : 1.12;
+      var slots = agents.map(function (a, i) {
+        var col = i % cols, row = Math.floor(i / cols);
+        return { x: (col - (cols - 1) / 2) * cw, y: (row - (rows - 1) / 2) * ch };
+      });
+      board.style.width = (cols * cw + 28) + 'px';
+      board.style.height = (rows * ch + 28 + 28) + 'px';
+      m = {
+        column: column,
+        capEm: capEm, restEm: restEm,
+        availW: availW, availH: availH, lineEmH: lineEmH,
+        w: pin.clientWidth, h: pin.clientHeight,
+        vmin: Math.min(pin.clientWidth, pin.clientHeight),
+        slots: slots, boardScale: boardScale,
+        /* a: width in em with nothing revealed, b: em that reveal adds at full */
+        a: column ? Math.max.apply(null, capEm) : sumCap + 2 * GAP0,
+        b: column ? Math.max.apply(null, restEm) : sumRest,
+        top: mark.getBoundingClientRect().top + window.scrollY,
+        travel: Math.max(1, mark.offsetHeight - pin.offsetHeight)
+      };
+      lastRaw = -1;
+    }
+
+    function renderScene(dt) {
+      frameNo++;
+      var c = clamp(raw / T_CHAOS);
+      var k = ease((raw - T_CHAOS) / (T_CTRL - T_CHAOS));
+      var g = ease((raw - T_CTRL) / (T_END - T_CTRL));
+      age += dt;
+      clock += dt * (1 - k);                 /* the swarm's own time slows as control takes over */
+      var emerge = ease(age / 1.4);          /* out of black */
+      var lightFade = 1 - ease(g / 0.35);   /* the board stays behind as the viewer flies out */
+      var still = (1 - k) * lightFade;
+      var rush = g;                          /* the way out: the corridor rushes past */
+      /* the exit: a small bright opening at the vanishing point from the start, then it comes at the viewer */
+      var base = 0.04 + 0.03 * c;
+      var sM = g > 0 ? base * Math.pow(3.4 / base, rush) : base;
+      scene.style.setProperty('--scene-lines', (emerge * (0.35 + 0.65 * Math.max(1 - k, rush)) * (1 - ease((rush - 0.8) / 0.2))).toFixed(3));
+      scene.style.setProperty('--scene-scan', (emerge * (1 - ease((rush - 0.4) / 0.5))).toFixed(3));
+      scene.style.setProperty('--scene-vig', (1 - ease(rush / 0.6)).toFixed(3));
+
+      /* camera: a slow drift while flying, dead still once in control */
+      var swayX = Math.sin(clock * 0.37) * 16 * still, swayY = Math.cos(clock * 0.29) * 10 * still;
+      var swayR = Math.sin(clock * 0.23) * 0.9 * still;
+      cam.style.transform = 'translate(' + swayX.toFixed(1) + 'px, ' + swayY.toFixed(1) + 'px) rotate(' + swayR.toFixed(2) + 'deg)';
+
+      /* corridor: the grid flows past, faster with scroll, then stops */
+      var dist = (clock * 90 + c * 900 + rush * 3600) % GRID;
+      walls.floor.style.transform = 'rotateX(-90deg) translateY(' + (-dist).toFixed(1) + 'px)';
+      walls.ceil.style.transform = 'rotateX(90deg) translateY(' + dist.toFixed(1) + 'px)';
+      walls.left.style.transform = 'rotateY(90deg) translateX(' + (-dist).toFixed(1) + 'px)';
+      walls.right.style.transform = 'rotateY(-90deg) translateX(' + dist.toFixed(1) + 'px)';
+
+      /* ring frames rushing past */
+      var camz = clock * 0.32 + c * 1.4 + rush * 5;
+      for (var i = 0; i < RINGS; i++) {
+        var d = (i / RINGS + 1 - (camz - Math.floor(camz))) % 1;
+        var s = 2.8 / (1 + d * 26);
+        var o = 0.5 * (0.4 + 0.6 * (1 - d)) * ease(d / 0.06) * ease((1 - d) / 0.3) * emerge * (1 - k + rush) * (1 - ease((rush - 0.75) / 0.25));
+        rings[i].style.transform = 'translate(-50%, -50%) scale(' + s.toFixed(4) + ')';
+        rings[i].style.opacity = o.toFixed(3);
+      }
+
+      /* agents: swarm in depth, then glide onto the board */
+      var RX = m.w * 0.55, RY = m.h * 0.5;
+      var t = clock;
+      var counts = { run: 0, att: 0, wait: 0, done: 0 };
+      for (var n = 0; n < agents.length; n++) {
+        var a = agents[n];
+        var dz = ((a.z0 + t * a.v + c * 0.6 * (a.v > 0 ? 1 : -1)) % 1 + 1) % 1;   /* 0 = at the viewer, 1 = far */
+        var persp = 0.35 / (0.35 + 2.2 * dz);
+        var sx = a.x0 + a.ax * Math.sin(a.wx * t + a.px);
+        var sy = a.y0 + a.ay * Math.sin(a.wy * t + a.py);
+        var px = sx * RX * persp, py = sy * RY * persp;
+        var sc = 2.4 * persp;
+        var op = ease(dz / 0.05) * ease((1 - dz) / 0.2) * emerge;
+        var rot = a.rot * Math.sin(a.wy * t * 1.3 + a.py);
+        var tiltY = -sx * 16, tiltX = sy * 10;
+        var st;
+        if (k < 0.5) {
+          var f = Math.sin(t * a.flick + a.px * 2);
+          st = f > 0.82 ? 'att' : f < -0.9 ? 'wait' : 'run';
+        } else {
+          st = (k - 0.78) / 0.22 > (n + 0.5) / agents.length ? 'done' : 'run';
+        }
+        if (st === 'att' && k < 0.5) { px += (rnd(frameNo, n) - 0.5) * 3; py += (rnd(frameNo, n + 40) - 0.5) * 3; }
+        if (k > 0) {
+          var slot = m.slots[n];
+          px += (slot.x - px) * k; py += (slot.y - py) * k;
+          sc += (m.boardScale - sc) * k; rot *= (1 - k); op += (1 - op) * k;
+          tiltY *= (1 - k); tiltX *= (1 - k);
+        }
+        op *= lightFade;
+        a.el.style.transform = 'translate(-50%, -50%) translate(' + px.toFixed(1) + 'px, ' + py.toFixed(1) + 'px) perspective(700px) rotateY(' + tiltY.toFixed(1) + 'deg) rotateX(' + tiltX.toFixed(1) + 'deg) scale(' + sc.toFixed(3) + ') rotate(' + rot.toFixed(2) + 'deg)';
+        a.el.style.opacity = op.toFixed(3);
+        a.el.style.zIndex = k > 0.5 ? 60 : 10 + Math.round((1 - dz) * 40);
+        setStatus(a, st);
+        counts[st]++;
+      }
+
+      /* the board panel appears around the controlled agents */
+      var bo = ease((k - 0.45) / 0.45) * lightFade;
+      board.style.opacity = bo.toFixed(3);
+      board.style.transform = 'translate(-50%, -50%) translateY(-14px) scale(' + (0.96 + 0.04 * ease((k - 0.45) / 0.45)).toFixed(3) + ')';
+
+      /* captions and live counts */
+      capA.style.opacity = (ease((age - 0.6) / 0.8) * (1 - ease(k / 0.4))).toFixed(3);
+      capB.style.opacity = (ease((k - 0.55) / 0.35) * (1 - ease(g / 0.25))).toFixed(3);
+      var textA = counts.run + ' running · ' + counts.att + ' retrying · ' + counts.wait + ' waiting';
+      var textB = counts.done + ' complete' + (counts.run ? ' · ' + counts.run + ' running' : '');
+      if (textA !== lastCountA) { countA.textContent = textA; lastCountA = textA; }
+      if (textB !== lastCountB) { countB.textContent = textB; lastCountB = textB; }
+
+      /* the opening comes at the viewer; outside, the mark already stands and grows with it */
+      exit.style.transform = 'translate(-50%, -50%) scale(' + sM.toFixed(4) + ')';
+      exit.style.opacity = (emerge * (0.6 + 0.4 * ease(g / 0.3))).toFixed(3);
+      mark.style.setProperty('--mark-pop', Math.max(0.04, Math.min(1, sM)).toFixed(4));
+      mark.classList.toggle('is-dawning', g > 0.001);
+      root.classList.toggle('mark-dark', sM < 1.15);
+    }
+
+    function renderUnfold() {
+      var p = clamp((raw - P_START) / (P_END - P_START));
+      var u = ease((p - 0.02) / 0.84);
+      /* exponential reveal: the size then shrinks at a steady visual rate */
+      var K = 1 + m.b / m.a;
+      var reveal = (m.a / m.b) * (Math.pow(K, u) - 1);
+      var gap = GAP0 + (GAP1 - GAP0) * ease(p / 0.5);
+      var contentEm;
+      if (m.column) {
+        contentEm = 0;
+        for (var i = 0; i < m.capEm.length; i++) {
+          contentEm = Math.max(contentEm, m.capEm[i] + m.restEm[i] * reveal);
+        }
+      } else {
+        contentEm = m.a - 2 * GAP0 + m.b * reveal + 2 * gap;
+      }
+      var size = Math.min(m.availW / contentEm, m.availH / m.lineEmH);
+      var alpha = ease(p / 0.28);
+      var slide = -0.15 * (1 - reveal);
+      var fade = 0.35 * (1 - reveal);
+      var st = mark.style;
+      st.setProperty('--mark-size', size.toFixed(2) + 'px');
+      st.setProperty('--mark-gap', gap.toFixed(4) + 'em');
+      st.setProperty('--mark-reveal', reveal.toFixed(4));
+      st.setProperty('--mark-slide', slide.toFixed(4) + 'em');
+      st.setProperty('--mark-fade', fade.toFixed(4) + 'em');
+      st.setProperty('--mark-alpha', alpha.toFixed(3));
+    }
+
+    function frame(ts) {
+      looping = false;
+      if (!m) return;
+      var dt = lastTs === null ? 0 : Math.min(0.05, (ts - lastTs) / 1000);
+      lastTs = ts;
+      raw = clamp((window.scrollY - m.top) / m.travel);
+      var lit = raw >= T_END;
+      var inView = window.scrollY < m.top + m.travel + m.h;
+      if (raw !== lastRaw) {
+        mark.classList.toggle('is-lit', lit);
+        if (lit) { root.classList.remove('mark-dark'); mark.classList.remove('is-dawning'); mark.style.setProperty('--mark-pop', '1'); }
+        renderUnfold();
+        mark.style.setProperty('--mark-hint', (lit || !hintReady) ? '0' : (1 - ease(raw / 0.03)).toFixed(3));
+        lastRaw = raw;
+      }
+      if (!lit && inView) {
+        renderScene(dt);
+        loop();
+      } else {
+        lastTs = null;
+      }
+    }
+    function loop() {
+      if (looping) return;
+      looping = true;
+      window.requestAnimationFrame(frame);
+    }
+
+    var resizeTimer = null;
+    var onResize = function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () { measure(); loop(); }, 120);
+    };
+
+    measure(); loop();
+    setTimeout(function () { hintReady = true; lastRaw = -1; loop(); }, 900);
+    window.addEventListener('scroll', loop, { passive: true });
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { measure(); loop(); });
+    }
+    window.addEventListener('load', function () { measure(); loop(); });
+
+    /* the hero's entrance waits until it scrolls into view */
+    if (hero && 'IntersectionObserver' in window) {
+      var heroIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { hero.classList.add('is-in'); heroIO.disconnect(); }
+        });
+      }, { threshold: 0.18 });
+      heroIO.observe(hero);
+    } else if (hero) {
+      hero.classList.add('is-in');
+    }
+  })();
+
 })();

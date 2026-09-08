@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>(function(){try{var t=localStorage.getItem('ive-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement;try{var t=localStorage.getItem('ive-theme');if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}}catch(e){}try{if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('mark-live');d.classList.add('mark-dark');}}catch(e){}})();</script>
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#F4F5F6">
 <title>IVE — Run agents. Keep control.</title>
@@ -39,7 +39,38 @@
 
 <main id="main">
 
-<!-- 02 · HERO: THE CONTROLLED RUN -->
+<!-- 02 · MARK: INSIDE THE MACHINE, AGENTS SWARM, COME UNDER CONTROL, THEN IVE UNFOLDS INTO ITS NAME -->
+<section class="mark" id="mark" aria-label="IVE — Integrated Vibecoding Environment" data-mark>
+  <div class="mark-pin" data-mark-pin>
+    <div class="scene" aria-hidden="true" data-scene>
+      <div class="scene-cam" data-scene-cam>
+        <div class="scene-space">
+          <div class="scene-wall wall-floor" data-wall="floor"></div>
+          <div class="scene-wall wall-ceil" data-wall="ceil"></div>
+          <div class="scene-wall wall-left" data-wall="left"></div>
+          <div class="scene-wall wall-right" data-wall="right"></div>
+        </div>
+        <div class="scene-rings" data-scene-rings></div>
+        <div class="scene-exit" data-scene-exit></div>
+        <div class="scene-vignette" data-scene-vignette></div>
+        <div class="scene-board" data-scene-board><span class="sb-title">MISSION CONTROL</span><span class="sb-count">12 sessions</span></div>
+        <div class="scene-swarm" data-scene-swarm></div>
+      </div>
+      <p class="scene-caption mono" data-scene-caption="a">Agents running everywhere.<span class="sc-count" data-scene-count="a"></span></p>
+      <p class="scene-caption mono" data-scene-caption="b">Under control.<span class="sc-count" data-scene-count="b"></span></p>
+      <div class="scene-scan"></div>
+    </div>
+    <p class="mark-line" aria-hidden="true" data-mark-line>
+      <span class="mark-word"><span class="mark-cap" data-mark-cap>I</span><span class="mark-rest"><span class="mark-rest-text" data-mark-rest>ntegrated</span></span></span>
+      <span class="mark-word"><span class="mark-cap" data-mark-cap>V</span><span class="mark-rest"><span class="mark-rest-text" data-mark-rest>ibecoding</span></span></span>
+      <span class="mark-word"><span class="mark-cap" data-mark-cap>E</span><span class="mark-rest"><span class="mark-rest-text" data-mark-rest>nvironment</span></span></span>
+    </p>
+    <p class="sr-only">IVE — Integrated Vibecoding Environment</p>
+    <p class="mark-hint mono" aria-hidden="true"><span class="mark-hint-word">Scroll</span><span class="mark-hint-line"></span></p>
+  </div>
+</section>
+
+<!-- 03 · HERO: THE CONTROLLED RUN -->
 <section class="hero phase-section" id="request" data-phase="request" aria-labelledby="hero-title">
   <div class="hero-inner">
     <div class="hero-copy">
@@ -81,7 +112,7 @@
   </div>
 </section>
 
-<!-- 03 · WHY IVE -->
+<!-- 04 · WHY IVE -->
 <section class="statement phase-section" id="why" data-phase="request" aria-labelledby="gap-title">
   <div class="statement-inner">
     <p class="kicker">WHY IVE</p>
@@ -90,7 +121,7 @@
   </div>
 </section>
 
-<!-- 04 · HOW IT WORKS -->
+<!-- 05 · HOW IT WORKS -->
 <section class="story phase-section" id="operation" data-phase="execute" aria-label="How IVE turns one goal into one reviewable result">
   <div class="story-pin"><div class="story-frame">
     <header class="story-header"><div><p class="kicker">HOW IVE WORKS</p><h2>From one goal to one review.</h2></div><p class="story-phase-sequence mono">GOAL → PLAN → WORK → CHECK → REVIEW</p></header>
@@ -109,7 +140,7 @@
   </div></div>
 </section>
 
-<!-- 05 · WHAT CHANGES -->
+<!-- 06 · WHAT CHANGES -->
 <section class="chapter pillars phase-section" id="route" data-phase="route" aria-labelledby="pillars-title">
   <div class="chapter-head"><p class="kicker">WHAT IVE HANDLES</p><h2 id="pillars-title">IVE coordinates the parallel work.</h2><p class="chapter-lede">It splits the goal into tasks, keeps sessions separate, retries failed checks, and brings the changes back for review.</p></div>
   <div class="pillar-list">
@@ -132,7 +163,7 @@
   </div>
 </section>
 
-<!-- 06 · YOUR DECISION -->
+<!-- 07 · YOUR DECISION -->
 <section class="review-section phase-section" id="verify" data-phase="verify" aria-labelledby="review-title">
   <div class="review-inner">
     <div class="review-copy"><p class="kicker kicker-light">REVIEW</p><h2 id="review-title">Review the result before it is merged.</h2><p class="review-lede">IVE shows the changed files, passed checks, failures, and open decisions in one summary.</p></div>
@@ -143,12 +174,12 @@
   </div>
 </section>
 
-<!-- 07 · OPEN SOURCE AND LOCAL TRUST -->
+<!-- 08 · OPEN SOURCE AND LOCAL TRUST -->
 <section class="chapter chapter-oss phase-section" id="open-source" data-phase="proof" aria-labelledby="oss-title">
   <div class="oss-grid"><div class="chapter-head"><p class="kicker">OPEN SOURCE</p><h2 id="oss-title">IVE runs locally. The source is public.</h2><p class="chapter-lede">IVE does not require an account or cloud project. Clone the repository, inspect the code, and run it on your machine.</p><div class="oss-row"><a class="btn btn-primary" href="https://github.com/vibe2vibe/ive" target="_blank" rel="noopener">View the repository</a><a class="btn btn-ghost" href="architecture.html">Read the architecture</a><a class="btn btn-ghost" href="https://github.com/vibe2vibe/ive/issues" target="_blank" rel="noopener">Report a bug</a></div></div><dl class="repo-evidence"><div><dt>runs</dt><dd>on your machine</dd></div><div><dt>works with</dt><dd>Claude Code · Gemini CLI</dd></div><div><dt>license</dt><dd>Apache-2.0</dd></div><div><dt>status</dt><dd>alpha</dd></div></dl></div>
 </section>
 
-<!-- 08 · REAL WORK -->
+<!-- 09 · REAL WORK -->
 <section class="chapter use-cases phase-section" data-phase="proof" aria-labelledby="use-cases-title">
   <div class="use-cases-head">
     <div class="chapter-head"><p class="kicker">CHOOSE A RUN</p><h2 id="use-cases-title">What would you hand to IVE?</h2></div>
@@ -189,7 +220,7 @@
   </div>
 </section>
 
-<!-- 09 · FINAL CTA -->
+<!-- 10 · FINAL CTA -->
 <section class="final phase-section" id="get-ive" data-phase="proof" aria-labelledby="final-title">
   <div class="final-inner">
     <div class="final-copy"><p class="kicker">START LOCAL</p><h2 class="final-title" id="final-title">Start with<br>one goal.</h2><p class="final-lede">Clone the open-source alpha, start IVE on your machine, and keep the whole run in view.</p><a class="btn btn-primary btn-big" href="https://github.com/vibe2vibe/ive" target="_blank" rel="noopener">View IVE on GitHub</a></div>
