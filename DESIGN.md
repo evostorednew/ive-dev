@@ -14,12 +14,12 @@ IVE is the local control room for parallel coding work. The website presents a
 clear outcome, not a collection of implementation details: one goal becomes
 visible parallel work and returns as one result a person can review.
 
-The footer is strictly factual: IVE, its relationship to AI for Gov, relevant
+The footer is strictly factual: IVE, its relationship to AIFOREU, relevant
 links, its EU-based origin, and its Apache 2.0 license. Decorative system-status
 language and compressed technical metadata do not appear there.
 
 The header carries a compact “IVE / by AIFOREU” maker lockup. The footer keeps
-the product relationship “from AI for Gov,” with AI for Gov linked to
+the product relationship “from AIFOREU,” with AIFOREU linked to
 `https://aiforgov.eu/`. “EU-backed” is not used because it can imply institutional
 EU funding or endorsement; no such claim is part of the verified product truth.
 
@@ -222,7 +222,7 @@ Grammar: **Branch → Execute → Verify → Proof.**
   needs, so the name never leaves the viewport. Below 720px the letters stack
   and unfold to the right. A “Scroll” cue with a running line sits below at
   the start. Once the name stands, the maker's signature “made by AIFOREU ↗”
-  appears at the foot of the pin and links to AI for Gov; in the header,
+  appears at the foot of the pin and links to AIFOREU; in the header,
   “by AIFOREU” under the wordmark is that same link. Without JavaScript or
   with reduced motion the full name stands as a plain block with the
   signature below. The cards are product objects, not characters.
