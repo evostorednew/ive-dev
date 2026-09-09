@@ -18,7 +18,7 @@ The footer is strictly factual: IVE, its relationship to AIFOREU, relevant
 links, its EU-based origin, and its Apache 2.0 license. Decorative system-status
 language and compressed technical metadata do not appear there.
 
-The header carries a compact “IVE / by AIFOREU” maker lockup. The footer keeps
+The header carries a compact “IVE / by AIFOREU” maker lockup. Header ink is explicitly bound to its own surface tokens so the logo and theme control stay readable over the dark opening. The 28px mark, 14px theme label, and 18px outlined “Get IVE” action provide clear hierarchy without a bright filled button; the action remains visible on mobile. The footer keeps
 the product relationship “from AIFOREU,” with AIFOREU linked to
 `https://aiforgov.eu/`. “EU-backed” is not used because it can imply institutional
 EU funding or endorsement; no such claim is part of the verified product truth.

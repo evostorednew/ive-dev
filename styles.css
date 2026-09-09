@@ -279,6 +279,7 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
 /* ── nav ───────────────────────────────────────────────────── */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  color: var(--text);
   border-bottom: 1px solid transparent;
   transition: background var(--med) ease, border-color var(--med) ease;
 }
@@ -290,7 +291,7 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
 }
 .nav-inner {
   max-width: var(--maxw); margin: 0 auto; padding: 0 var(--pad);
-  height: 64px; display: flex; align-items: center; gap: 28px;
+  height: 76px; display: flex; align-items: center; gap: 24px;
 }
 .wordmark {
   display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px;
@@ -299,17 +300,17 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
 .wordmark-main { display: inline-flex; align-items: baseline; gap: 7px; line-height: 0.9; color: inherit; text-decoration: none; }
 .wordmark-text {
   font-family: var(--display);
-  font-weight: 800; font-size: 21px;
+  font-weight: 800; font-size: 28px;
   letter-spacing: 0.01em;
 }
 .wordmark-by {
   margin-left: 1px;
   font-family: var(--mono);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 500;
   line-height: 1;
   letter-spacing: 0.105em;
-  color: var(--text-faint);
+  color: var(--text-dim);
   white-space: nowrap;
   text-decoration: none;
   transition: color var(--fast);
@@ -325,19 +326,22 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
 
 .nav-links { display: flex; align-items: center; gap: 26px; }
 .nav-links a {
-  font-size: 14px; font-weight: 500; text-decoration: none;
+  font-size: 16px; font-weight: 500; text-decoration: none;
   color: var(--text-dim);
   transition: color var(--fast) ease;
 }
 .nav-links a:hover { color: var(--text); }
 .theme-toggle {
-  inline-size: 84px;
-  flex: 0 0 84px;
-  padding: 7px 8px;
-  border: 1px solid var(--line);
+  inline-size: 92px;
+  flex: 0 0 92px;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: var(--text);
+  background: var(--bg-raised);
+  border: 1px solid var(--line-strong);
   border-radius: var(--r-chip);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: 0.07em;
@@ -346,7 +350,18 @@ h3 { letter-spacing: -0.02em; line-height: 1.15; }
   transition: color var(--fast) ease, border-color var(--fast) ease, background var(--fast) ease;
 }
 .theme-toggle:hover { color: var(--text); border-color: var(--line-strong); background: var(--bg-raised); }
-.nav-cta { padding: 8px 16px; font-size: 14px; }
+.nav-cta {
+  min-height: 44px;
+  padding: 8px 18px;
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 650;
+  white-space: nowrap;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--line-strong);
+}
+.nav-cta:hover { color: var(--text); background: var(--bg-raised); border-color: var(--text-dim); }
 
 /* ── hero ──────────────────────────────────────────────────── */
 .hero { padding: 148px 0 80px; }
@@ -2084,7 +2099,7 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
 
 @media (max-width: 660px) {
   .nav-inner { gap: 10px; padding-inline: 16px; }
-  .nav-cta { display: none; }
+  .nav-cta { padding-inline: 12px; font-size: 17px; }
   .hero { padding-top: 132px; }
   .hero-ctas { display: grid; }
   .hero-ctas .btn { justify-content: center; }
