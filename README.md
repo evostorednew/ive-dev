@@ -19,7 +19,7 @@ Then open `http://localhost:8000/`. The pages also work directly from `file://`.
 - `imprint.html` and `privacy.html` — legal provider information and site-specific privacy notice
 - `404.html` — self-contained not-found page
 - `styles.css` — shared design system and page styles
-- `script.js` — dependency-free theme, scroll-driven mark, run-story, use-case chooser, and copy behavior
+- `script.js` — dependency-free theme, scroll-driven mark, sequential Why IVE benefits, run-story, use-case chooser, and copy behavior
 - `assets/og.html` — 1200×630 Open Graph image source
 - `assets/fonts.css` and `assets/fonts/` — self-hosted Archivo, Source Sans 3 and IBM Plex Mono, including OFL license texts
 - `DESIGN.md` — binding visual and interaction contract

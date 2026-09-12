@@ -1155,6 +1155,198 @@
   }
 })();
 
+/* Why IVE: first let the question fill the viewport and hold.
+   It then docks above four answers. The same session sheets unfold, face the reader,
+   pass under a verification sweep, and become a human review.
+   Scroll owns the timeline in both directions; there is no autoplay. */
+(function () {
+  'use strict';
+  var section = document.querySelector('[data-why]');
+  if (!section) return;
+  var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var compact = window.matchMedia('(max-height: 600px)');
+  var pin = section.querySelector('.why-pin');
+  var scene = section.querySelector('.why-scene');
+  var deck = section.querySelector('[data-why-deck]');
+  var question = section.querySelector('.why-question');
+  var words = Array.from(section.querySelectorAll('[data-why-word]'));
+  var prelude = section.querySelector('[data-why-prelude]');
+  var cue = section.querySelector('[data-why-cue]');
+  var layout = section.querySelector('.why-layout');
+  var controls = section.querySelector('.why-progress');
+  var beats = Array.from(section.querySelectorAll('[data-why-beat]'));
+  var planes = Array.from(section.querySelectorAll('[data-why-plane]'));
+  var statuses = Array.from(section.querySelectorAll('[data-why-status]'));
+  var tracks = Array.from(section.querySelectorAll('[data-why-track]'));
+  var jumps = Array.from(section.querySelectorAll('[data-why-jump]'));
+  var scan = section.querySelector('[data-why-scan]');
+  var receipt = section.querySelector('[data-why-receipt]');
+  var caption = section.querySelector('[data-why-caption]');
+  var captions = ['one goal, four focused tasks', 'every session, one clear view', 'check, retry, check again', 'the final decision stays yours'];
+  var clamp = function (n) { return Math.max(0, Math.min(1, n)); };
+  var ease = function (n) { n = clamp(n); return n * n * (3 - 2 * n); };
+  var mix = function (a, b, t) { return a + (b - a) * t; };
+  var live = false, raf = 0, current = -1, scale = 1, questionPoses = [];
+  var ANSWERS_START = 0.28;
+  // x, y, z, rotation X, rotation Y, rotation Z, opacity — per sheet.
+  var poses = [
+    [[-140, -96, 0, 48, -12, -24, 1], [116, -84, 48, 48, -12, -24, 1], [-120, 85, 35, 48, -12, -24, 1], [136, 102, 83, 48, -12, -24, 1]],
+    [[-128, -88, 0, 0, 0, 0, 1], [128, -88, 0, 0, 0, 0, 1], [-128, 88, 0, 0, 0, 0, 1], [128, 88, 0, 0, 0, 0, 1]],
+    [[-128, -88, 0, 12, -8, 0, 1], [128, -88, 0, 12, -8, 0, 1], [-128, 88, 0, 12, -8, 0, 1], [128, 88, 0, 12, -8, 0, 1]],
+    [[-12, 55, -45, 0, 0, -6, 1], [12, 40, -30, 0, 0, 5, 1], [-8, 23, -15, 0, 0, -3, 1], [0, 6, 0, 0, 0, 0, 1]]
+  ];
+
+  function setState(index, state) {
+    var plane = planes[index];
+    if (plane.dataset.state === state) return;
+    plane.dataset.state = state;
+    plane.classList.toggle('is-done', state === 'done');
+    plane.classList.toggle('is-attention', state === 'retry');
+    plane.classList.toggle('is-waiting', state === 'wait');
+    statuses[index].textContent = { done: '✓ complete', retry: '! retrying', wait: '◇ waiting', run: '● running' }[state];
+  }
+
+  function render() {
+    raf = 0;
+    if (!live || document.hidden) return;
+    // Read the section position each time: upstream sections can change height.
+    var box = section.getBoundingClientRect();
+    var height = pin.offsetHeight;
+    var progress = clamp(-box.top / Math.max(1, section.offsetHeight - height));
+    var dock = ease((progress - 0.10) / 0.15);
+    var answerAlpha = ease((progress - 0.245) / (ANSWERS_START - 0.245));
+    words.forEach(function (word, i) {
+      var pose = questionPoses[i];
+      if (!pose) return;
+      // On mobile, make room horizontally before bringing the two lines together.
+      var collapse = pose.stacked ? 1 - Math.pow(1 - clamp(dock / 0.72), 2) : dock;
+      word.style.transform = 'translate3d(' + (pose.x * (1 - collapse)).toFixed(2) + 'px,' + (pose.y * (1 - dock)).toFixed(2) + 'px,0) scale(' + mix(pose.scale, 1, collapse).toFixed(4) + ')';
+    });
+    prelude.style.opacity = (1 - ease((progress - 0.07) / 0.04)).toFixed(3);
+    cue.style.opacity = (1 - ease((progress - 0.06) / 0.05)).toFixed(3);
+    layout.style.opacity = answerAlpha.toFixed(3);
+    layout.style.transform = 'translateY(' + ((1 - answerAlpha) * 24).toFixed(2) + 'px)';
+    controls.style.opacity = answerAlpha.toFixed(3);
+    controls.inert = answerAlpha < 0.5;
+
+    var timeline = Math.min(3.9999, clamp((progress - ANSWERS_START) / (1 - ANSWERS_START)) * 4);
+    var step = Math.floor(timeline);
+    var local = timeline - step;
+    var incoming = step === 0 ? 1 : ease(local / 0.19);
+    var outgoing = step === 3 ? 1 : 1 - ease((local - 0.82) / 0.18);
+
+    var active = answerAlpha > 0.5 ? step : -1;
+    if (current !== active) {
+      current = active;
+      beats.forEach(function (beat, i) {
+        beat.style.pointerEvents = i === active ? 'auto' : 'none';
+        // All four explanations stay available to assistive technology in DOM order.
+      });
+      jumps.forEach(function (jump, i) {
+        if (i === active) jump.setAttribute('aria-current', 'step');
+        else jump.removeAttribute('aria-current');
+      });
+      caption.textContent = captions[step];
+    }
+    beats.forEach(function (beat, i) {
+      if (i !== step) { beat.style.opacity = '0'; return; }
+      beat.style.opacity = (incoming * outgoing).toFixed(3);
+      beat.style.transform = 'translate3d(0,' + ((1 - incoming) * 28 - (1 - outgoing) * 20).toFixed(2) + 'px,0) rotateX(' + ((1 - incoming) * -6).toFixed(2) + 'deg)';
+      beat.style.filter = 'blur(' + ((1 - incoming * outgoing) * 5).toFixed(2) + 'px)';
+    });
+    jumps.forEach(function (jump, i) {
+      jump.style.setProperty('--why-fill', clamp(timeline - i).toFixed(3));
+    });
+
+    var review = step === 3 ? ease((local - 0.2) / 0.38) : 0;
+    deck.style.transform = 'scale(' + scale.toFixed(3) + ')';
+    planes.forEach(function (plane, i) {
+      var to = poses[step][i];
+      var from = step === 0 ? [i * 8, i * -12, i * 16, 58, -12, -28, 1] : poses[step - 1][i];
+      var transition = ease((local - i * 0.035) / (step === 0 ? 0.46 : 0.38));
+      var p = to.map(function (value, axis) { return mix(from[axis], value, transition); });
+      plane.style.transform = 'translate3d(' + p[0].toFixed(2) + 'px,' + p[1].toFixed(2) + 'px,' + p[2].toFixed(2) + 'px) rotateX(' + p[3].toFixed(2) + 'deg) rotateY(' + p[4].toFixed(2) + 'deg) rotateZ(' + p[5].toFixed(2) + 'deg) scale(' + (1 + review * 0.46).toFixed(3) + ',' + (1 + review * 0.64).toFixed(3) + ')';
+      plane.style.setProperty('--why-detail', (1 - review).toFixed(3));
+      var done = step === 3 || (step === 2 && local > 0.48 + i * 0.075);
+      var state = done ? 'done' : i === 2 && step === 2 ? 'retry' : i === 3 ? 'wait' : 'run';
+      setState(i, state);
+      var fill = done ? 1 : step === 2 && i === 2 ? mix(0.12, 0.9, ease(local / 0.7)) : i === 3 ? 0.08 : clamp(0.15 + i * 0.09 + timeline * 0.21);
+      tracks[i].style.transform = 'scaleX(' + fill.toFixed(3) + ')';
+    });
+    var sweep = ease((local - 0.25) / 0.55);
+    scan.style.opacity = step === 2 ? (ease((local - 0.2) / 0.08) * (1 - ease((local - 0.81) / 0.12))).toFixed(3) : '0';
+    scan.style.transform = 'translate3d(0,' + (sweep * 355).toFixed(2) + 'px,70px)';
+    receipt.style.opacity = review.toFixed(3);
+    receipt.style.transform = 'translate3d(0,' + ((1 - review) * 35).toFixed(2) + 'px,' + ((1 - review) * 180).toFixed(2) + 'px) rotateX(' + ((1 - review) * -12).toFixed(2) + 'deg)';
+  }
+
+  function schedule() {
+    if (live && !raf && !document.hidden) raf = requestAnimationFrame(render);
+  }
+
+  function measure() {
+    scale = Math.min(1, scene.clientWidth / 590, scene.clientHeight / 420);
+    if (live) {
+      var pinBox = pin.getBoundingClientRect();
+      var titleBox = question.getBoundingClientRect();
+      var mobile = pin.clientWidth <= 720;
+      var padding = parseFloat(getComputedStyle(pin).paddingLeft);
+      var width = pin.clientWidth - padding * 2;
+      var lineHeight = question.offsetHeight;
+      var largeScale = mobile
+        ? Math.min(width / Math.max(words[0].offsetWidth, words[1].offsetWidth), pin.offsetHeight * 0.44 / (lineHeight * 2.05))
+        : Math.min(width / question.offsetWidth, pin.offsetHeight * 0.36 / lineHeight);
+      var groupHeight = lineHeight * largeScale * (mobile ? 2.05 : 1);
+      var groupTop = (pin.offsetHeight - groupHeight) / 2 + 24;
+      var groupLeft = (pin.clientWidth - question.offsetWidth * largeScale) / 2;
+      questionPoses = words.map(function (word, i) {
+        var x = mobile ? (pin.clientWidth - word.offsetWidth * largeScale) / 2 : groupLeft + word.offsetLeft * largeScale;
+        var y = groupTop + (mobile ? i * lineHeight * largeScale * 1.05 : 0);
+        return { x: x - (titleBox.left - pinBox.left) - word.offsetLeft, y: y - (titleBox.top - pinBox.top), scale: largeScale, stacked: mobile };
+      });
+      prelude.style.top = (groupTop - 56) + 'px';
+    }
+    schedule();
+  }
+
+  function syncMode() {
+    // Short landscape windows use ordinary flow so every benefit is reachable.
+    live = !motion.matches && !compact.matches;
+    section.classList.toggle('is-live', live);
+    current = -1;
+    if (!live) {
+      cancelAnimationFrame(raf); raf = 0;
+      words.forEach(function (word) { word.style.removeProperty('transform'); });
+      layout.style.removeProperty('opacity'); layout.style.removeProperty('transform');
+      controls.style.removeProperty('opacity'); controls.inert = false;
+      beats.forEach(function (beat) {
+        beat.style.removeProperty('pointer-events'); beat.style.removeProperty('opacity');
+        beat.style.removeProperty('transform'); beat.style.removeProperty('filter');
+      });
+    }
+    measure();
+  }
+
+  jumps.forEach(function (jump, i) {
+    jump.addEventListener('click', function () {
+      if (!live) return;
+      var top = section.getBoundingClientRect().top + window.scrollY;
+      var travel = section.offsetHeight - pin.offsetHeight;
+      // Arrive on the settled pose, with the selected sentence fully readable.
+      window.scrollTo({ top: top + travel * (ANSWERS_START + (1 - ANSWERS_START) * ((i + 0.64) / 4)), behavior: 'instant' });
+      schedule();
+    });
+  });
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', measure);
+  window.addEventListener('load', measure);
+  document.addEventListener('visibilitychange', schedule);
+  motion.addEventListener('change', syncMode);
+  compact.addEventListener('change', syncMode);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+  syncMode();
+})();
+
 /* IVE.DEV — merge: every session comes back as one review.
    One lane per session, drawn by scroll as they curve into a single trunk;
    a packet travels each lane while it runs; the trunk ends in one review. */

@@ -75,8 +75,9 @@ Rules:
   smaller display roles; its expanded construction is the typographic signature.
 - Source Sans 3 keeps explanatory copy calm and readable beside the wider display face.
 - Machine voice is IBM Plex Mono. Terminal output is never proportional.
-- The H1 is the largest expression. Chapters step down from it.
-- The size ladder is hero 42–66px, chapter 32–46px, statement 28–40px,
+- The H1 leads the product copy. The standalone “WHY IVE?” question deliberately
+  fills the viewport before the answers; other chapters step down from the H1.
+- The size ladder is hero 42–66px, chapter 32–46px, Why IVE statements 30–54px,
   use-case and section titles 22–30px, card titles 17–19px, and body 16–18px.
 - Headlines use weight 620, negative tracking from -0.045em at the largest size
   toward -0.02em at the smallest, balanced wrapping, expanded width, and 1.01–1.15 leading.
@@ -177,7 +178,8 @@ The homepage contains exactly these blocks, in order:
 
 1. Header
 2. Hero: the controlled run
-3. Why IVE
+3. Why IVE: four short benefits, one at a time — parallel work, every agent
+   in view, automatic retries, and the reader's final decision
 4. How it works
 5. Four user outcomes
 6. Merge: every session comes back as one review, drawn by scroll
@@ -206,6 +208,24 @@ the dedicated Architecture page or in the repository documentation.
 Grammar: **Branch → Execute → Verify → Proof.**
 
 - The end-to-end run uses CSS transforms with vanilla JavaScript.
+- “WHY IVE?” first owns the entire viewport. “You have the agents.” sets up
+  the question, which holds on its own with a quiet scroll cue. The same two
+  words then shrink and move into a prominent chapter heading; only once that
+  movement is nearly complete do the four short answers and their visual appear.
+  On mobile the opening question stacks on two lines, then comes together into
+  one line above the answers. The first 28% of the scroll belongs to this setup.
+  Each answer has one explanatory sentence. One continuous composition of four session
+  sheets unfolds in perspective for parallel work, turns face-on into an
+  overview, passes beneath a verification scan that changes retry to complete,
+  and stacks beneath a final review. The reader controls the pace in either
+  direction. Text fades out before the next statement appears, with a small
+  depth and focus shift. Four labeled progress controls jump to each settled
+  state and work with the keyboard. The visual is labeled as an illustrated
+  example, and its review surface is an illustration, not a live merge action.
+  The sequence has no continuous animation loop: only scroll and resize request
+  frames. Small screens scale the instrument beneath the text. Reduced motion,
+  no JavaScript, and short landscape windows show all four benefits in normal
+  flow. All four explanations remain available to assistive technology.
 - The page opens inside the machine: black ground, a grid corridor (floor,
   ceiling, walls in true perspective) rushing past with ring frames, a slow
   camera drift, and coding agents as two-line session cards swarming around

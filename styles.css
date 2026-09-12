@@ -1964,11 +1964,151 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
   letter-spacing: 0.025em;
 }
 
-/* Problem and end-to-end run. */
-.statement-inner { max-width: var(--maxw); }
-.statement .kicker { margin-bottom: 28px; }
-.statement-title { max-width: 1100px; }
-.paradigm { max-width: 1040px; }
+/* Why IVE — a full-screen question, then four short answers.
+   Normal flow is the fallback. JS opts into the scroll sequence. */
+.why { border-top: 1px solid var(--line); scroll-margin-top: 76px; }
+.why-pin { padding: clamp(80px, 10vh, 130px) var(--pad); }
+.why-inner { max-width: 1384px; margin-inline: auto; }
+.why-question {
+  display: flex; gap: 0.2em; width: max-content; margin-bottom: 56px;
+  font-size: clamp(42px, 7vw, 96px); font-weight: 650; line-height: 0.95;
+  letter-spacing: -0.055em; color: var(--text);
+}
+.why-question > span { display: block; transform-origin: 0 0; }
+.why-prelude, .why-cue { display: none; }
+.why-copy { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.why-beat h3 {
+  font-size: clamp(30px, 3.8vw, 54px); font-stretch: 125%;
+  line-height: 1.06; letter-spacing: -0.045em; font-weight: 620;
+}
+.why-beat h3 span { color: var(--text-dim); }
+.why-beat p { margin-top: 22px; color: var(--text-dim); font-size: 18px; max-width: 32ch; line-height: 1.45; }
+.why-visual, .why-progress { display: none; }
+.why.is-live { height: 490vh; height: 490svh; }
+.why.is-live .why-pin {
+  position: sticky; top: 0; height: 100vh; height: 100svh; min-height: 580px;
+  display: flex; align-items: center; padding-block: 104px 40px;
+  overflow: clip;
+}
+.why.is-live .why-inner { width: 100%; }
+.why.is-live .why-question { position: relative; z-index: 2; font-size: clamp(32px, 3.4vw, 46px); margin-bottom: 28px; }
+.why.is-live .why-question > span { will-change: transform; }
+.why.is-live .why-prelude {
+  display: block; position: absolute; left: 50%; transform: translateX(-50%);
+  font-size: 17px; color: var(--text-dim); white-space: nowrap;
+}
+.why.is-live .why-cue {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono); font-size: 10px; color: var(--text-faint);
+}
+.why-cue span { height: 32px; width: 1px; background: var(--line-strong); }
+.why.is-live .why-layout { display: grid; grid-template-columns: 0.9fr 1.1fr; align-items: center; gap: 24px; }
+.why.is-live .why-layout, .why.is-live .why-progress { opacity: 0; }
+.why.is-live .why-copy { position: relative; display: block; min-height: 220px; perspective: 900px; }
+.why.is-live .why-beat { position: absolute; inset: 0; opacity: 0; pointer-events: none; will-change: transform, opacity; }
+.why.is-live .why-beat:first-child { opacity: 1; }
+.why.is-live .why-visual { display: block; min-width: 0; }
+.why-scene { height: clamp(350px, 48vh, 480px); position: relative; perspective: 1200px; }
+.why-deck {
+  position: absolute; left: 50%; top: 50%; width: 560px; height: 400px;
+  margin: -200px 0 0 -280px; transform-style: preserve-3d;
+}
+.why-plane {
+  --plane-state: var(--running);
+  position: absolute; left: 50%; top: 50%; width: 236px; height: 156px;
+  margin: -78px 0 0 -118px; padding: 18px;
+  border: 1px solid var(--line-strong); border-radius: var(--r-panel);
+  background: var(--bg-raised); backface-visibility: hidden;
+  box-shadow: 0 2px 0 var(--bg-inset), 0 3px 0 var(--line-strong), 0 22px 38px -26px rgba(0, 0, 0, 0.4);
+  will-change: transform;
+}
+.why-plane > * { opacity: var(--why-detail, 1); }
+.why-plane-head {
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--mono); font-size: 10px; color: var(--text-faint);
+}
+.why-plane-status { color: var(--running-ink); }
+.why-plane.is-waiting .why-plane-status { color: var(--waiting-ink); }
+.why-plane.is-attention { --plane-state: var(--attention); border-color: var(--attention); }
+.why-plane.is-attention .why-plane-status { color: var(--attention-ink); }
+.why-plane.is-done { --plane-state: var(--complete); }
+.why-plane.is-done .why-plane-status { color: var(--complete-ink); }
+.why-plane > strong { display: block; margin-top: 11px; font-family: var(--display); font-size: 19px; line-height: 1.2; }
+.why-plane-model { font-family: var(--mono); font-size: 9px; color: var(--text-faint); }
+.why-work-lines { display: grid; grid-template-columns: 1fr 0.45fr 0.7fr; gap: 5px; margin-top: 16px; }
+.why-work-lines i { height: 3px; background: var(--line); border-radius: 1px; }
+.why-plane-track { height: 2px; background: var(--line); position: absolute; bottom: 0; left: 18px; right: 18px; }
+.why-plane-track i { display: block; height: 100%; background: var(--plane-state); transform: scaleX(0.5); transform-origin: left; }
+.why-scan {
+  position: absolute; left: 17px; top: 20px; width: 526px; height: 1px;
+  background: var(--running); opacity: 0; transform: translateZ(100px);
+}
+.why-scan::before {
+  content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 34px;
+  background: linear-gradient(transparent, color-mix(in srgb, var(--running) 10%, transparent));
+}
+.why-scan span {
+  position: absolute; right: 0; bottom: 8px; font-family: var(--mono);
+  color: var(--running-ink); font-size: 9px; letter-spacing: 0.13em;
+}
+.why-receipt {
+  position: absolute; top: 50%; left: 50%; width: 368px; height: 270px;
+  margin: -135px 0 0 -184px; padding: 24px; opacity: 0;
+  border: 1px solid var(--line-strong); border-radius: var(--r-panel);
+  background: var(--bg-raised); transform: translateZ(100px);
+  box-shadow: 0 2px 0 var(--bg-inset), 0 3px 0 var(--line-strong), 0 32px 50px -36px rgba(0, 0, 0, 0.45);
+}
+.why-receipt-head { display: flex; align-items: center; justify-content: space-between; color: var(--text-faint); }
+.why-receipt-head .mono { font-size: 10px; letter-spacing: 0.1em; }
+.why-receipt > strong { display: block; font-family: var(--display); font-size: 23px; line-height: 1.2; letter-spacing: -0.025em; margin: 18px 0 20px; }
+.why-receipt-row { display: flex; justify-content: space-between; padding-block: 8px; border-top: 1px solid var(--line); font-size: 13px; }
+.why-receipt-row > span:last-child { font-family: var(--mono); font-size: 10px; color: var(--complete-ink); }
+.why-review-gate { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; padding-top: 13px; border-top: 1px solid var(--line-strong); font-size: 13px; }
+.why-review-gate > span:last-child { font-size: 11px; color: var(--text-dim); }
+.why-visual-caption { text-align: center; font-family: var(--mono); font-size: 10px; color: var(--text-faint); margin-top: 12px; }
+.why.is-live .why-progress { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 32px; }
+.why-progress button { position: relative; padding: 18px 0; color: var(--text-faint); text-align: left; font-family: var(--mono); font-size: 11px; }
+.why-progress button::before, .why-progress button i { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--line-strong); }
+.why-progress button i { background: var(--running); transform: scaleX(var(--why-fill, 0)); transform-origin: left; }
+.why-progress button[aria-current="step"], .why-progress button:hover { color: var(--text); }
+
+@media (max-width: 1080px) and (min-width: 721px) {
+  .why-beat h3 { font-size: clamp(32px, 4vw, 44px); }
+  .why-beat p { font-size: 17px; max-width: 29ch; }
+}
+@media (max-width: 720px) {
+  .why-copy { grid-template-columns: 1fr; gap: 40px; }
+  .why.is-live { height: 460svh; }
+  .why.is-live .why-pin { padding-block: 96px 24px; min-height: 610px; }
+  .why.is-live .why-layout { grid-template-columns: 1fr; gap: 0; }
+  .why.is-live .why-question { font-size: 30px; margin-bottom: 28px; }
+  .why.is-live .why-copy { min-height: 166px; }
+  .why-beat h3 { font-size: clamp(30px, 8.8vw, 42px); }
+  .why-beat p { font-size: 16px; margin-top: 14px; max-width: 30ch; }
+  .why-scene { height: clamp(226px, 33svh, 320px); }
+  .why-visual-caption { font-size: 8px; margin-top: 0; }
+  .why.is-live .why-progress { gap: 12px; margin-top: 28px; }
+  .why-progress button { font-size: 9px; white-space: nowrap; padding-block: 15px; }
+}
+@media (max-height: 660px) and (min-width: 721px) {
+  .why.is-live .why-pin { min-height: 460px; padding-block: 88px 16px; }
+  .why-scene { height: 300px; }
+  .why.is-live .why-progress { margin-top: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .why.is-live { height: auto; }
+  .why.is-live .why-pin { position: relative; height: auto; min-height: 0; padding-block: 80px; }
+  .why.is-live .why-layout { display: block; }
+  .why.is-live .why-question > span { transform: none !important; }
+  .why.is-live .why-prelude, .why.is-live .why-cue { display: none; }
+  .why.is-live .why-layout { opacity: 1 !important; transform: none !important; }
+  .why.is-live .why-copy { display: grid; min-height: 0; }
+  .why.is-live .why-beat { position: static; opacity: 1 !important; visibility: visible !important; transform: none !important; filter: none !important; }
+  .why.is-live .why-visual, .why.is-live .why-progress { display: none; }
+}
+
+/* End-to-end run. */
 .story-frame { max-width: var(--maxw); }
 .story-header h2 { margin-top: 8px; font-size: clamp(22px, 2.4vw, 30px); letter-spacing: -0.03em; line-height: 1.08; }
 .story-phase-sequence { color: var(--text-faint); font-size: 10.5px; }
