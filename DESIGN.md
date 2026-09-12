@@ -214,6 +214,9 @@ Grammar: **Branch → Execute → Verify → Proof.**
   movement is nearly complete do the four short answers and their visual appear.
   On mobile the opening question stacks on two lines, then comes together into
   one line above the answers. The first 28% of the scroll belongs to this setup.
+  The question animates through real font sizes and positioned words. Never
+  enlarge a small text layer with `scale()` or `will-change: transform`: Safari
+  can retain the small raster and visibly pixelate the full-screen lettering.
   Each answer has one explanatory sentence. One continuous composition of four session
   sheets unfolds in perspective for parallel work, turns face-on into an
   overview, passes beneath a verification scan that changes retry to complete,

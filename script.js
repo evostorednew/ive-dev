@@ -1220,7 +1220,10 @@
       if (!pose) return;
       // On mobile, make room horizontally before bringing the two lines together.
       var collapse = pose.stacked ? 1 - Math.pow(1 - clamp(dock / 0.72), 2) : dock;
-      word.style.transform = 'translate3d(' + (pose.x * (1 - collapse)).toFixed(2) + 'px,' + (pose.y * (1 - dock)).toFixed(2) + 'px,0) scale(' + mix(pose.scale, 1, collapse).toFixed(4) + ')';
+      // Set real type size, not a compositor scale of small rasterized glyphs.
+      word.style.fontSize = (pose.fontSize * mix(pose.scale, 1, collapse)).toFixed(3) + 'px';
+      word.style.left = (pose.left + pose.x * (1 - collapse)).toFixed(3) + 'px';
+      word.style.top = (pose.y * (1 - dock)).toFixed(3) + 'px';
     });
     prelude.style.opacity = (1 - ease((progress - 0.07) / 0.04)).toFixed(3);
     cue.style.opacity = (1 - ease((progress - 0.06) / 0.05)).toFixed(3);
@@ -1287,23 +1290,32 @@
   function measure() {
     scale = Math.min(1, scene.clientWidth / 590, scene.clientHeight / 420);
     if (live) {
+      // Measure the docked heading in flow, then reserve that same space while
+      // its words are independently positioned and typeset at full resolution.
+      section.classList.add('is-measuring');
       var pinBox = pin.getBoundingClientRect();
       var titleBox = question.getBoundingClientRect();
+      var fontSize = parseFloat(getComputedStyle(question).fontSize);
       var mobile = pin.clientWidth <= 720;
       var padding = parseFloat(getComputedStyle(pin).paddingLeft);
       var width = pin.clientWidth - padding * 2;
-      var lineHeight = question.offsetHeight;
+      var lineHeight = titleBox.height;
+      var wordWidths = words.map(function (word) { return word.getBoundingClientRect().width; });
       var largeScale = mobile
-        ? Math.min(width / Math.max(words[0].offsetWidth, words[1].offsetWidth), pin.offsetHeight * 0.44 / (lineHeight * 2.05))
-        : Math.min(width / question.offsetWidth, pin.offsetHeight * 0.36 / lineHeight);
+        ? Math.min(width / Math.max(wordWidths[0], wordWidths[1]), pin.offsetHeight * 0.44 / (lineHeight * 2.05))
+        : Math.min(width / titleBox.width, pin.offsetHeight * 0.36 / lineHeight);
       var groupHeight = lineHeight * largeScale * (mobile ? 2.05 : 1);
       var groupTop = (pin.offsetHeight - groupHeight) / 2 + 24;
-      var groupLeft = (pin.clientWidth - question.offsetWidth * largeScale) / 2;
+      var groupLeft = (pin.clientWidth - titleBox.width * largeScale) / 2;
       questionPoses = words.map(function (word, i) {
-        var x = mobile ? (pin.clientWidth - word.offsetWidth * largeScale) / 2 : groupLeft + word.offsetLeft * largeScale;
+        var left = word.getBoundingClientRect().left - titleBox.left;
+        var x = mobile ? (pin.clientWidth - wordWidths[i] * largeScale) / 2 : groupLeft + left * largeScale;
         var y = groupTop + (mobile ? i * lineHeight * largeScale * 1.05 : 0);
-        return { x: x - (titleBox.left - pinBox.left) - word.offsetLeft, y: y - (titleBox.top - pinBox.top), scale: largeScale, stacked: mobile };
+        return { x: x - (titleBox.left - pinBox.left) - left, y: y - (titleBox.top - pinBox.top), left: left, fontSize: fontSize, scale: largeScale, stacked: mobile };
       });
+      question.style.width = titleBox.width + 'px';
+      question.style.height = titleBox.height + 'px';
+      section.classList.remove('is-measuring');
       prelude.style.top = (groupTop - 56) + 'px';
     }
     schedule();
@@ -1316,7 +1328,10 @@
     current = -1;
     if (!live) {
       cancelAnimationFrame(raf); raf = 0;
-      words.forEach(function (word) { word.style.removeProperty('transform'); });
+      words.forEach(function (word) {
+        word.style.removeProperty('font-size'); word.style.removeProperty('left'); word.style.removeProperty('top');
+      });
+      question.style.removeProperty('width'); question.style.removeProperty('height');
       layout.style.removeProperty('opacity'); layout.style.removeProperty('transform');
       controls.style.removeProperty('opacity'); controls.inert = false;
       beats.forEach(function (beat) {

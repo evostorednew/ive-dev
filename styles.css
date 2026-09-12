@@ -1974,7 +1974,7 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
   font-size: clamp(42px, 7vw, 96px); font-weight: 650; line-height: 0.95;
   letter-spacing: -0.055em; color: var(--text);
 }
-.why-question > span { display: block; transform-origin: 0 0; }
+.why-question > span { display: block; letter-spacing: -0.055em; }
 .why-prelude, .why-cue { display: none; }
 .why-copy { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
 .why-beat h3 {
@@ -1992,7 +1992,11 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
 }
 .why.is-live .why-inner { width: 100%; }
 .why.is-live .why-question { position: relative; z-index: 2; font-size: clamp(32px, 3.4vw, 46px); margin-bottom: 28px; }
-.why.is-live .why-question > span { will-change: transform; }
+/* Rasterize glyphs at their actual displayed font size. Promoting small text
+   with will-change/scale makes Safari enlarge a low-resolution text layer. */
+.why.is-live .why-question > span { position: absolute; top: 0; left: 0; white-space: nowrap; }
+.why.is-measuring .why-question { width: max-content !important; height: auto !important; }
+.why.is-measuring .why-question > span { position: static; font-size: inherit !important; }
 .why.is-live .why-prelude {
   display: block; position: absolute; left: 50%; transform: translateX(-50%);
   font-size: 17px; color: var(--text-dim); white-space: nowrap;
@@ -2100,7 +2104,8 @@ h3, .delegate-say, .stat-n, .merge-ready { font-family: var(--display); }
   .why.is-live { height: auto; }
   .why.is-live .why-pin { position: relative; height: auto; min-height: 0; padding-block: 80px; }
   .why.is-live .why-layout { display: block; }
-  .why.is-live .why-question > span { transform: none !important; }
+  .why.is-live .why-question { width: max-content !important; height: auto !important; }
+  .why.is-live .why-question > span { position: static; font-size: inherit !important; }
   .why.is-live .why-prelude, .why.is-live .why-cue { display: none; }
   .why.is-live .why-layout { opacity: 1 !important; transform: none !important; }
   .why.is-live .why-copy { display: grid; min-height: 0; }
